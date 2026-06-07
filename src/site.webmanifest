@@ -8,14 +8,9 @@
   "description": "Premier law firm in Pokhara, Nepal. Expert legal services in criminal, property, and corporate law.",
   "icons": [
     {
-      "src": "/static/assets/brand/logo_icon.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "/static/assets/brand/logo_icon.png",
-      "sizes": "512x512",
-      "type": "image/png"
+      "src": "/static/assets/brand/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
     }
   ]
 }

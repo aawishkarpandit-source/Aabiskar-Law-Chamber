@@ -116,7 +116,7 @@ const DataLoader = {
         if (!data || !data[group]) return;
         container.innerHTML = data[group].map((m, i) => `
             <div class="team-card" data-aos="fade-up" data-aos-delay="${(i + 1) * 100}">
-                <div class="team-avatar">${m.name.split(' ').map(n => n[0]).join('').slice(0, 2)}</div>
+                ${m.image ? `<img src="${m.image}" alt="${m.name}" class="team-photo" loading="lazy">` : `<div class="team-avatar">${m.name.split(' ').map(n => n[0]).join('').slice(0, 2)}</div>`}
                 <h3 class="team-name">${m.name}</h3>
                 <p class="team-role">${m.role}</p>
                 <p class="team-specialization">${m.specialization}</p>
