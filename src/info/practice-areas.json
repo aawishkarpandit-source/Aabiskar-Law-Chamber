@@ -1,0 +1,86 @@
+[
+  {
+    "id": "corporate-law",
+    "title": "Corporate Law",
+    "description": "Comprehensive legal services for businesses including company formation, mergers & acquisitions, corporate governance, and regulatory compliance.",
+    "icon": "building",
+    "services": [
+      "Company Registration & Formation",
+      "Mergers & Acquisitions",
+      "Corporate Governance",
+      "Regulatory Compliance",
+      "Joint Ventures & Partnerships",
+      "Business Contract Drafting"
+    ]
+  },
+  {
+    "id": "family-law",
+    "title": "Family Law",
+    "description": "Compassionate legal guidance through family matters including divorce, child custody, adoption, and domestic disputes.",
+    "icon": "people",
+    "services": [
+      "Divorce & Separation",
+      "Child Custody & Support",
+      "Adoption",
+      "Domestic Violence Cases",
+      "Property Division",
+      "Mediation & Conflict Resolution"
+    ]
+  },
+  {
+    "id": "criminal-defense",
+    "title": "Criminal Defense",
+    "description": "Aggressive defense representation for individuals facing criminal charges, from minor offenses to serious felony cases.",
+    "icon": "shield",
+    "services": [
+      "Bail Applications",
+      "Trial Representation",
+      "Appeals & Revisions",
+      "White Collar Crime Defense",
+      "Cyber Crime Cases",
+      "Drug Offense Defense"
+    ]
+  },
+  {
+    "id": "property-law",
+    "title": "Property Law",
+    "description": "Expert legal assistance with real estate transactions, property disputes, land registration, and tenancy matters.",
+    "icon": "home",
+    "services": [
+      "Property Transfer & Registration",
+      "Land Dispute Resolution",
+      "Tenant Rights & Eviction",
+      "Title Verification",
+      "Real Estate Due Diligence",
+      "Construction Contracts"
+    ]
+  },
+  {
+    "id": "civil-litigation",
+    "title": "Civil Litigation",
+    "description": "Skilled courtroom advocacy for civil disputes including contract breaches, personal injury, and tort claims.",
+    "icon": "gavel",
+    "services": [
+      "Contract Disputes",
+      "Personal Injury Claims",
+      "Tort Litigation",
+      "Consumer Protection",
+      "Debt Recovery",
+      "Injunction Applications"
+    ]
+  },
+  {
+    "id": "labor-law",
+    "title": "Labor Law",
+    "description": "Advisory and litigation services for employment disputes, labor rights, workplace safety, and union matters.",
+    "icon": "briefcase",
+    "services": [
+      "Employment Contracts",
+      "Wrongful Termination",
+      "Workplace Discrimination",
+      "Workers Compensation",
+      "Union Disputes",
+      "Labor Compliance"
+    ]
+  }
+]

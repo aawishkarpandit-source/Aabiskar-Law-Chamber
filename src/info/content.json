@@ -1,0 +1,76 @@
+{
+  "hero": {
+    "badge": "Recognized for Excellence & Integrity",
+    "titleLine1": "The Best Law",
+    "titleLine2": "Chamber in Pokhara",
+    "subtitle": "Recognized for excellence and integrity, providing the highest standard of legal solutions for individuals and businesses across Nepal. Your justice, our commitment.",
+    "ctaPrimary": "Book a Consultation",
+    "ctaSecondary": "Our Services"
+  },
+  "intro": {
+    "label": "Who We Are",
+    "title": "Pokhara's Most Trusted Legal Advisors",
+    "paragraphs": [
+      "At Aabiskar Law Chamber, we understand that legal challenges require more than just technical knowledge; they require a deep understanding of the local judicial landscape in Kaski and across Nepal. Our firm has been at the forefront of landmark cases involving land disputes, corporate compliance, and criminal defense.",
+      "From the District Court of Kaski to the High Court and Supreme Court, our advocates bring a wealth of experience. We provide rigorous representation in matters of civil litigation, ensuring that the Muluki Civil Code is applied with precision to protect your assets and family interests."
+    ]
+  },
+  "features": {
+    "label": "Our Services",
+    "title": "Our Premier Services",
+    "cards": [
+      {
+        "title": "Asset Protection",
+        "description": "Navigating the complexities of property law and inheritance to ensure your family legacy remains secure under Nepalese law.",
+        "icon": "shield"
+      },
+      {
+        "title": "Mediation Services",
+        "description": "Resolving disputes through structured negotiation before they escalate to costly courtroom battles.",
+        "icon": "handshake"
+      },
+      {
+        "title": "Civil Advocacy",
+        "description": "Fighting for your rights in tort law, contract breaches, and personal injury claims with unmatched dedication.",
+        "icon": "balance"
+      }
+    ]
+  },
+  "about": {
+    "label": "About Us",
+    "title": "Commitment to Justice",
+    "paragraphs": [
+      "Legal procedures in Nepal can be daunting. Whether you are dealing with the 'Malpot' office for land registry or navigating the High Court in Pokhara, we stand by you. Our philosophy is rooted in the principle of <em>Audi alteram partem</em> — the right to be heard. We ensure your voice is not lost in the bureaucratic corridors of justice.",
+      "We also specialize in the new labor laws of 2074, helping both employers and employees find common ground in the rapidly evolving industrial sector of Pokhara."
+    ],
+    "image": "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=600&q=80",
+    "imageAlt": "Legal Consultation"
+  },
+  "whyChooseUs": {
+    "label": "Why Choose Us",
+    "title": "Why Choose Us?",
+    "cards": [
+      {
+        "title": "Expert Advocacy",
+        "description": "Our lawyers are experts in the Muluki Civil Code and Criminal Code of Nepal, offering unparalleled insight into local laws.",
+        "icon": "balance"
+      },
+      {
+        "title": "Meticulous Planning",
+        "description": "We leave no stone unturned in document preparation and case strategy, ensuring the best possible outcome for our clients.",
+        "icon": "document"
+      },
+      {
+        "title": "Transparent Communication",
+        "description": "We believe in keeping our clients informed at every stage of the legal process, ensuring clarity and peace of mind.",
+        "icon": "chat"
+      }
+    ]
+  },
+  "cta": {
+    "title": "Start Your Legal Journey Today",
+    "subtitle": "Don't leave your future to chance. Consult with the best legal minds in Pokhara.",
+    "primaryBtn": "Schedule Appointment",
+    "secondaryBtn": "View Practice Areas"
+  }
+}

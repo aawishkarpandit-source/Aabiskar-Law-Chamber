@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel — Aabiskar Law Chamber</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy: #0a1628;
+      --navy-light: #121e36;
+      --navy-mid: #1a2a4a;
+      --gold: #c9a96e;
+      --gold-light: #dfc594;
+      --gold-dark: #b8933f;
+      --bg: #0e1a30;
+      --surface: #152040;
+      --surface-hover: #1c2c54;
+      --border: #1e3058;
+      --text: #e4e8f1;
+      --text-dim: #8895b0;
+      --success: #2ecc71;
+      --error: #e74c3c;
+      --warning: #f39c12;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    a { color: var(--gold); text-decoration: none; }
+    a:hover { color: var(--gold-light); }
+
+    .admin-header {
+      background: var(--navy);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .admin-header h1 {
+      font-size: 1.25rem;
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .admin-header h1 svg { width: 24px; height: 24px; stroke: var(--gold); fill: none; stroke-width: 2; }
+    .header-actions { display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; }
+    .preview-link {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      color: var(--gold);
+      transition: all 0.2s;
+    }
+    .preview-link:hover { background: var(--surface-hover); border-color: var(--gold); }
+
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+      background: var(--error);
+    }
+    .status-dot.connected { background: var(--success); }
+    .status-dot.loading { background: var(--warning); animation: pulse 1s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 1.5rem;
+    }
+
+    .auth-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .auth-section h2 {
+      font-size: 1rem;
+      color: var(--gold);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .auth-section h2 svg { width: 18px; height: 18px; stroke: var(--gold); fill: none; stroke-width: 2; }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    @media (max-width: 768px) {
+      .form-row { grid-template-columns: 1fr; }
+    }
+    .form-group { display: flex; flex-direction: column; gap: 0.35rem; }
+    .form-group label {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .form-group input {
+      background: var(--navy);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.6rem 0.8rem;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-family: monospace;
+      transition: border-color 0.2s;
+    }
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--gold);
+    }
+
+    .btn {
+      padding: 0.55rem 1.2rem;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .btn-primary {
+      background: var(--gold);
+      color: var(--navy);
+    }
+    .btn-primary:hover { background: var(--gold-light); }
+    .btn-primary:disabled {
+      background: var(--gold-dark);
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+    }
+    .btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+    .btn-danger { background: var(--error); color: white; }
+    .btn-danger:hover { background: #c0392b; }
+    .btn-sm { padding: 0.35rem 0.7rem; font-size: 0.8rem; }
+
+    .section-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 1.25rem;
+      overflow: hidden;
+    }
+    .section-header {
+      padding: 1rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: background 0.2s;
+      user-select: none;
+    }
+    .section-header:hover { background: var(--surface-hover); }
+    .section-header h3 {
+      font-size: 0.95rem;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .section-header h3 svg { width: 18px; height: 18px; stroke: var(--gold); fill: none; stroke-width: 2; }
+    .section-header .chevron {
+      transition: transform 0.3s;
+      stroke: var(--text-dim);
+      fill: none;
+      width: 20px;
+      height: 20px;
+    }
+    .section-card.open .section-header .chevron { transform: rotate(180deg); }
+    .section-body {
+      display: none;
+      padding: 1.25rem;
+    }
+    .section-card.open .section-body { display: block; }
+
+    .editor-area {
+      width: 100%;
+      min-height: 300px;
+      background: var(--navy);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: 'Fira Code', 'Cascadia Code', monospace;
+      font-size: 0.82rem;
+      padding: 1rem;
+      border-radius: 8px;
+      resize: vertical;
+      line-height: 1.5;
+      tab-size: 2;
+    }
+    .editor-area:focus { outline: none; border-color: var(--gold); }
+    .editor-area.error { border-color: var(--error); }
+
+    .section-actions {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 1rem;
+      align-items: center;
+    }
+    .section-status {
+      font-size: 0.8rem;
+      margin-left: auto;
+    }
+    .section-status.success { color: var(--success); }
+    .section-status.error { color: var(--error); }
+    .section-status.loading { color: var(--warning); }
+
+    .auth-btn-row {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      padding: 0.8rem 1.2rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      z-index: 10000;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s;
+      pointer-events: none;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; pointer-events: auto; }
+    .toast.success { background: var(--success); color: white; }
+    .toast.error { background: var(--error); color: white; }
+    .toast.warning { background: var(--warning); color: var(--navy); }
+
+    .footer {
+      text-align: center;
+      padding: 2rem;
+      color: var(--text-dim);
+      font-size: 0.8rem;
+      border-top: 1px solid var(--border);
+      margin-top: 2rem;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      color: var(--text-dim);
+    }
+    .empty-state svg { width: 48px; height: 48px; stroke: var(--text-dim); fill: none; margin-bottom: 1rem; }
+  </style>
+</head>
+<body>
+
+<header class="admin-header">
+  <h1>
+    <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+    Aabiskar Law Chamber — Admin
+  </h1>
+  <div class="header-actions">
+    <span class="status-dot" id="status-dot" title="Disconnected"></span>
+    <span id="status-text" style="font-size:0.8rem;color:var(--text-dim)">Disconnected</span>
+    <a href="/" target="_blank" class="preview-link">Preview Site →</a>
+  </div>
+</header>
+
+<div class="container">
+
+  <div class="auth-section">
+    <h2>
+      <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      GitHub Authentication
+    </h2>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="pat-input">Personal Access Token</label>
+        <input type="password" id="pat-input" placeholder="ghp_xxxxxxxxxxxx" autocomplete="off">
+      </div>
+      <div class="form-group">
+        <label for="repo-input">Repository (owner/repo)</label>
+        <input type="text" id="repo-input" value="aawishkarpandit-source/Aabiskar-Law-Chamber">
+      </div>
+      <div class="form-group">
+        <label for="branch-input">Branch</label>
+        <input type="text" id="branch-input" value="main">
+      </div>
+    </div>
+    <div class="auth-btn-row">
+      <button class="btn btn-primary" id="auth-btn">Connect</button>
+      <button class="btn btn-outline" id="disconnect-btn">Disconnect</button>
+    </div>
+  </div>
+
+  <div id="sections-container">
+    <div class="empty-state">
+      <svg viewBox="0 0 24 24" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <p>Connect with your GitHub token to edit site content.</p>
+    </div>
+  </div>
+
+</div>
+
+<footer class="footer">
+  Aabiskar Law Chamber Admin Panel · All changes are committed to GitHub
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function() {
+  const STORAGE_PAT = 'aal-admin-pat';
+  const STORAGE_REPO = 'aal-admin-repo';
+  const STORAGE_BRANCH = 'aal-admin-branch';
+
+  let pat = localStorage.getItem(STORAGE_PAT) || '';
+  let repo = localStorage.getItem(STORAGE_REPO) || 'aawishkarpandit-source/Aabiskar-Law-Chamber';
+  let branch = localStorage.getItem(STORAGE_BRANCH) || 'main';
+
+  const sections = [
+    {
+      id: 'site',
+      label: 'Site Info',
+      file: 'site.json',
+      icon: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>'
+    },
+    {
+      id: 'content',
+      label: 'Content',
+      file: 'content.json',
+      icon: '<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>'
+    },
+    {
+      id: 'team',
+      label: 'Team',
+      file: 'team.json',
+      icon: '<svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>'
+    },
+    {
+      id: 'services',
+      label: 'Services',
+      file: 'services.json',
+      icon: '<svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>'
+    },
+    {
+      id: 'testimonials',
+      label: 'Testimonials',
+      file: 'testimonials.json',
+      icon: '<svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>'
+    },
+    {
+      id: 'faq',
+      label: 'FAQ',
+      file: 'faq.json',
+      icon: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>'
+    },
+    {
+      id: 'stats',
+      label: 'Stats',
+      file: 'stats.json',
+      icon: '<svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>'
+    },
+    {
+      id: 'practice-areas',
+      label: 'Practice Areas',
+      file: 'practice-areas.json',
+      icon: '<svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>'
+    }
+  ];
+
+  function showToast(msg, type) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast ' + type + ' show';
+    setTimeout(() => t.classList.remove('show'), 3500);
+  }
+
+  function setStatus(state, text) {
+    const dot = document.getElementById('status-dot');
+    const label = document.getElementById('status-text');
+    dot.className = 'status-dot ' + state;
+    label.textContent = text;
+  }
+
+  async function ghFetch(path, method, body) {
+    const headers = {
+      'Authorization': 'token ' + pat,
+      'Accept': 'application/vnd.github.v3+json'
+    };
+    if (body) {
+      headers['Content-Type'] = 'application/json';
+    }
+    const url = 'https://api.github.com/repos/' + repo + path;
+    const res = await fetch(url, { method, headers, body: body ? JSON.stringify(body) : undefined });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || 'GitHub API error ' + res.status);
+    }
+    return res.json();
+  }
+
+  async function getFileContent(filename) {
+    const data = await ghFetch('/contents/src/info/' + filename + '?ref=' + branch);
+    const decoded = atob(data.content.replace(/\s/g, ''));
+    return { content: decoded, sha: data.sha };
+  }
+
+  async function saveFileContent(filename, content, sha, message) {
+    const body = {
+      message: message || 'Update ' + filename + ' via Admin Panel',
+      content: btoa(unescape(encodeURIComponent(content))),
+      sha: sha,
+      branch: branch
+    };
+    return ghFetch('/contents/src/info/' + filename, 'PUT', body);
+  }
+
+  function initAuth() {
+    document.getElementById('pat-input').value = pat;
+    document.getElementById('repo-input').value = repo;
+    document.getElementById('branch-input').value = branch;
+
+    document.getElementById('auth-btn').addEventListener('click', async () => {
+      pat = document.getElementById('pat-input').value.trim();
+      repo = document.getElementById('repo-input').value.trim();
+      branch = document.getElementById('branch-input').value.trim();
+      if (!pat) { showToast('Please enter a Personal Access Token', 'error'); return; }
+      if (!repo) { showToast('Please enter a repository', 'error'); return; }
+
+      setStatus('loading', 'Connecting...');
+      try {
+        await ghFetch('/user', 'GET');
+        localStorage.setItem(STORAGE_PAT, pat);
+        localStorage.setItem(STORAGE_REPO, repo);
+        localStorage.setItem(STORAGE_BRANCH, branch);
+        setStatus('connected', 'Connected: ' + repo);
+        showToast('Connected successfully', 'success');
+        renderSections();
+      } catch (err) {
+        setStatus('error', 'Connection failed');
+        showToast('Auth failed: ' + err.message, 'error');
+      }
+    });
+
+    document.getElementById('disconnect-btn').addEventListener('click', () => {
+      pat = '';
+      localStorage.removeItem(STORAGE_PAT);
+      localStorage.removeItem(STORAGE_REPO);
+      localStorage.removeItem(STORAGE_BRANCH);
+      document.getElementById('pat-input').value = '';
+      document.getElementById('status-dot').className = 'status-dot';
+      document.getElementById('status-text').textContent = 'Disconnected';
+      document.getElementById('sections-container').innerHTML =
+        '<div class="empty-state"><svg viewBox="0 0 24 24" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><p>Connect with your GitHub token to edit site content.</p></div>';
+      showToast('Disconnected', 'warning');
+    });
+
+    if (pat) {
+      document.getElementById('auth-btn').click();
+    }
+  }
+
+  function renderSections() {
+    const container = document.getElementById('sections-container');
+    container.innerHTML = '';
+
+    sections.forEach(sec => {
+      const card = document.createElement('div');
+      card.className = 'section-card';
+      card.innerHTML = `
+        <div class="section-header" data-section="${sec.id}">
+          <h3>${sec.icon} ${sec.label}</h3>
+          <svg class="chevron" viewBox="0 0 24 24" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="section-body" id="section-body-${sec.id}">
+          <textarea class="editor-area" id="editor-${sec.id}" spellcheck="false" placeholder="Loading..."></textarea>
+          <div class="section-actions">
+            <button class="btn btn-primary btn-sm" data-action="load" data-file="${sec.file}" data-section="${sec.id}">Load from GitHub</button>
+            <button class="btn btn-primary btn-sm" data-action="save" data-file="${sec.file}" data-section="${sec.id}">Save to GitHub</button>
+            <button class="btn btn-outline btn-sm" data-action="format" data-section="${sec.id}">Format JSON</button>
+            <span class="section-status" id="status-${sec.id}"></span>
+          </div>
+        </div>
+      `;
+      container.appendChild(card);
+
+      const header = card.querySelector('.section-header');
+      header.addEventListener('click', () => {
+        card.classList.toggle('open');
+      });
+    });
+
+    container.querySelectorAll('.btn[data-action]').forEach(btn => {
+      btn.addEventListener('click', handleAction);
+    });
+
+    document.querySelectorAll('.section-card').forEach(card => {
+      const id = card.querySelector('.section-header').getAttribute('data-section');
+      const editor = document.getElementById('editor-' + id);
+      if (editor) {
+        editor.addEventListener('keydown', (e) => {
+          if (e.key === 'Tab') {
+            e.preventDefault();
+            const start = editor.selectionStart;
+            const end = editor.selectionEnd;
+            editor.value = editor.value.substring(0, start) + '  ' + editor.value.substring(end);
+            editor.selectionStart = editor.selectionEnd = start + 2;
+          }
+        });
+      }
+    });
+  }
+
+  async function handleAction(e) {
+    const btn = e.currentTarget;
+    const action = btn.getAttribute('data-action');
+    const file = btn.getAttribute('data-file');
+    const secId = btn.getAttribute('data-section');
+    const editor = document.getElementById('editor-' + secId);
+    const status = document.getElementById('status-' + secId);
+
+    if (action === 'format') {
+      try {
+        const parsed = JSON.parse(editor.value);
+        editor.value = JSON.stringify(parsed, null, 2);
+        showToast('JSON formatted', 'success');
+      } catch (err) {
+        showToast('Invalid JSON: ' + err.message, 'error');
+      }
+      return;
+    }
+
+    if (action === 'load') {
+      btn.disabled = true;
+      status.className = 'section-status loading';
+      status.textContent = 'Loading...';
+      try {
+        const { content, sha } = await getFileContent(file);
+        editor.value = content;
+        editor.dataset.sha = sha;
+        status.className = 'section-status success';
+        status.textContent = 'Loaded · SHA: ' + sha.substring(0, 7);
+        showToast(secId + '.json loaded', 'success');
+      } catch (err) {
+        status.className = 'section-status error';
+        status.textContent = 'Error: ' + err.message;
+        showToast('Load failed: ' + err.message, 'error');
+      } finally {
+        btn.disabled = false;
+      }
+      return;
+    }
+
+    if (action === 'save') {
+      const content = editor.value.trim();
+      if (!content) { showToast('Editor is empty', 'error'); return; }
+
+      let parsed;
+      try {
+        parsed = JSON.parse(content);
+      } catch (err) {
+        showToast('Invalid JSON: ' + err.message, 'error');
+        return;
+      }
+
+      if (!editor.dataset.sha) {
+        showToast('Please load the file first to get its SHA', 'error');
+        return;
+      }
+
+      btn.disabled = true;
+      status.className = 'section-status loading';
+      status.textContent = 'Saving...';
+      try {
+        const result = await saveFileContent(file, content, editor.dataset.sha, 'Update ' + file + ' via Admin Panel');
+        editor.dataset.sha = result.content.sha;
+        status.className = 'section-status success';
+        status.textContent = 'Saved · SHA: ' + result.content.sha.substring(0, 7);
+        showToast(secId + '.json saved successfully', 'success');
+      } catch (err) {
+        status.className = 'section-status error';
+        status.textContent = 'Error: ' + err.message;
+        showToast('Save failed: ' + err.message, 'error');
+      } finally {
+        btn.disabled = false;
+      }
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', initAuth);
+})();
+</script>
+</body>
+</html>

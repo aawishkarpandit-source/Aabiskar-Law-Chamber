@@ -1,0 +1,29 @@
+{
+  "senior": [
+    {
+      "name": "Adv. Hari Prasad Pandit",
+      "role": "Advocate",
+      "specialization": "Criminal, Property & Corporate Law",
+      "experience": "20+ years",
+      "phone": "+977 9856032810",
+      "image": "/static/assets/brand/hpp.jpg"
+    },
+    {
+      "name": "Adv. Hari Prasad Bhattarai",
+      "role": "Advocate",
+      "specialization": "Legal Specialist",
+      "experience": "15+ years",
+      "phone": "Coming Soon",
+      "image": "/static/assets/brand/hpb.jpg"
+    }
+  ],
+  "associates": [
+    {
+      "name": "Sonali Thakur",
+      "role": "Legal Associate",
+      "specialization": "Legal Research & Client Relations",
+      "phone": "TBA",
+      "image": ""
+    }
+  ]
+}

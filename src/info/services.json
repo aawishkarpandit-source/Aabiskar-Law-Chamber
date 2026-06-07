@@ -1,0 +1,44 @@
+[
+  {
+    "id": "criminal-litigation",
+    "title": "Criminal Litigation",
+    "description": "Expert defense and legal representation in criminal proceedings within the District and High Courts of Nepal.",
+    "detail": "Specializing in bail applications, white-collar crime defense, and appellate practice.",
+    "icon": "gavel"
+  },
+  {
+    "id": "property-law",
+    "title": "Property & Land Law",
+    "description": "Comprehensive assistance with land disputes, registration, and Lalpurja-related matters in the Kaski region.",
+    "detail": "Handling Guthi land issues, Mohi rights, and border wall disputes with local authorities.",
+    "icon": "home"
+  },
+  {
+    "id": "family-law",
+    "title": "Family & Divorce",
+    "description": "Sensitive legal handling of Ansa-Banda (inheritance), divorce, and domestic relations cases.",
+    "detail": "Child custody, alimony settlements, and marital property division according to the 2074 Code.",
+    "icon": "people"
+  },
+  {
+    "id": "corporate-law",
+    "title": "Corporate Law",
+    "description": "Helping local businesses with registration, compliance, and contract management in Pokhara.",
+    "detail": "Company formation, foreign investment regulation, and intellectual property protection.",
+    "icon": "briefcase"
+  },
+  {
+    "id": "banking-finance",
+    "title": "Banking and Finance",
+    "description": "Representing major financial institutions in Pokhara for loan recovery, mortgage vetting, and compliance with Nepal Rastra Bank directives.",
+    "detail": "",
+    "icon": "shield"
+  },
+  {
+    "id": "cyber-law",
+    "title": "Cyber Law and IT",
+    "description": "Providing guidance on the Electronic Transactions Act, ensuring your business is protected against digital fraud and defamation.",
+    "detail": "",
+    "icon": "shield"
+  }
+]

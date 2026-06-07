@@ -1,0 +1,50 @@
+{
+  "name": "Aabiskar Law Chamber",
+  "shortName": "Aabiskar Law",
+  "tagline": "Trusted Legal Counsel in Pokhara",
+  "description": "Aabiskar Law Chamber is the premier law firm in Pokhara, Nepal. Led by Adv. Hari Prasad Pandit, we provide expert legal services in criminal, property, and corporate law.",
+  "url": "https://aabiskar-law-chamber.vercel.app",
+  "logo": "/static/assets/brand/logo.png",
+  "logoIcon": "/static/assets/brand/logo_icon.png",
+  "email": "pandithari912@gmail.com",
+  "phone": "+977-061-555555",
+  "whatsapp": "+9779856032810",
+  "location": {
+    "office": "Aabiskar Law Chamber",
+    "street": "Rastra Bank Chowk",
+    "city": "Pokhara",
+    "district": "Kaski",
+    "province": "Gandaki Province",
+    "country": "Nepal"
+  },
+  "social": {
+    "facebook": "https://facebook.com/aabiskarlaw",
+    "whatsapp": "https://wa.me/9779856032810"
+  },
+  "copyright": "2026",
+  "managedBy": "Aabiskar Law Chamber",
+  "madeBy": "Aabiskar Law Chamber",
+  "nav": [
+    { "label": "Home", "href": "/" },
+    { "label": "About", "href": "/about" },
+    { "label": "Practice Areas", "href": "/services" },
+    { "label": "Team", "href": "/team" },
+    { "label": "Contact", "href": "/contact" }
+  ],
+  "footerQuickLinks": [
+    { "label": "Home", "href": "/" },
+    { "label": "About Us", "href": "/about" },
+    { "label": "Practice Areas", "href": "/services" },
+    { "label": "Our Team", "href": "/team" },
+    { "label": "Contact", "href": "/contact" }
+  ],
+  "officeHours": {
+    "weekdays": "10:00 AM - 5:00 PM",
+    "saturday": "Closed",
+    "note": "Consultations outside these hours are available by appointment only."
+  },
+  "cookie": {
+    "title": "We value your privacy",
+    "text": "This site uses cookies from Google Analytics to analyze traffic. No personal data is sold or shared."
+  }
+}
