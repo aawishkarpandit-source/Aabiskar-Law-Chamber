@@ -3,9 +3,7 @@
   "outputDirectory": ".",
   "cleanUrls": true,
   "trailingSlash": false,
-  "rewrites": [
-    { "source": "/api/github/:path*", "destination": "/api/github.js" }
-  ],
+  "rewrites": [],
   "headers": [
     {
       "source": "/(.*)",

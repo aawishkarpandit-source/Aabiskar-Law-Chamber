@@ -405,8 +405,8 @@
   }
 
   async function ghFetch(path, method, body) {
-    const proxyPath = repo + path;
-    const url = '/api/github/' + proxyPath;
+    const githubPath = repo + path;
+    const url = '/api/github?path=' + encodeURIComponent(githubPath);
     const headers = {
       'Authorization': 'token ' + pat,
       'Accept': 'application/vnd.github.v3+json'
