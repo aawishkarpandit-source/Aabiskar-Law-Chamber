@@ -405,6 +405,8 @@
   }
 
   async function ghFetch(path, method, body) {
+    const proxyPath = repo + path;
+    const url = '/api/github/' + proxyPath;
     const headers = {
       'Authorization': 'token ' + pat,
       'Accept': 'application/vnd.github.v3+json'
@@ -412,7 +414,6 @@
     if (body) {
       headers['Content-Type'] = 'application/json';
     }
-    const url = 'https://api.github.com/repos/' + repo + path;
     const res = await fetch(url, { method, headers, body: body ? JSON.stringify(body) : undefined });
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
