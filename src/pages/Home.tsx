@@ -1,0 +1,208 @@
+import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
+import {
+  getHeroContent,
+  getIntroContent,
+  getFeaturesContent,
+  getWhyChooseUsContent,
+  getCTAContent,
+  getStats,
+} from '../lib/queries'
+import type {
+  HeroContent,
+  IntroContent,
+  FeaturesContent,
+  WhyChooseUsContent,
+  CTAContent,
+  Stat,
+} from '../types'
+
+export default function Home() {
+  const [hero, setHero] = useState<HeroContent | null>(null)
+  const [intro, setIntro] = useState<IntroContent | null>(null)
+  const [features, setFeatures] = useState<FeaturesContent | null>(null)
+  const [whyChooseUs, setWhyChooseUs] = useState<WhyChooseUsContent | null>(
+    null
+  )
+  const [cta, setCta] = useState<CTAContent | null>(null)
+  const [stats, setStats] = useState<Stat[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [heroData, introData, featuresData, whyData, ctaData, statsData] =
+          await Promise.all([
+            getHeroContent(),
+            getIntroContent(),
+            getFeaturesContent(),
+            getWhyChooseUsContent(),
+            getCTAContent(),
+            getStats(),
+          ])
+
+        setHero(heroData)
+        setIntro(introData)
+        setFeatures(featuresData)
+        setWhyChooseUs(whyData)
+        setCta(ctaData)
+        setStats(statsData)
+      } catch (error) {
+        console.error('Error fetching data:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center" style={{ minHeight: '50vh' }}>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2" style={{ borderColor: '#c5a059' }}></div>
+      </div>
+    )
+  }
+
+  return (
+    <div>
+      {/* Hero Section */}
+      {hero && (
+        <section className="hero">
+          <div className="hero-shapes">
+            <div className="hero-shape hero-shape-1"></div>
+            <div className="hero-shape hero-shape-2"></div>
+            <div className="hero-shape hero-shape-3"></div>
+          </div>
+          <div className="hero-content">
+            <div className="hero-badge">
+              <div className="hero-badge-dot"></div>
+              <span className="hero-badge-text">{hero.badge}</span>
+            </div>
+            <h1 className="hero-title">
+              <span className="line">{hero.titleLine1}</span>
+              <span className="line accent">{hero.titleLine2}</span>
+            </h1>
+            <p className="hero-subtitle">{hero.subtitle}</p>
+            <div className="hero-buttons">
+              <Link to="/contact" className="btn-primary">
+                {hero.ctaPrimary}
+              </Link>
+              <Link to="/services" className="btn-secondary">
+                <span>{hero.ctaSecondary}</span>
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Stats Section */}
+      {stats.length > 0 && (
+        <section className="stats-section">
+          <div className="container">
+            <div className="stats-grid">
+              {stats.map((stat) => (
+                <div key={stat.id} className="stat-item">
+                  <div className="stat-number">{stat.value}</div>
+                  <div className="stat-label">{stat.label}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Intro Section */}
+      {intro && (
+        <section>
+          <div className="container">
+            <div className="about-grid">
+              <div className="about-text">
+                <div className="section-label">{intro.label}</div>
+                <h2 className="section-title">{intro.title}</h2>
+                {intro.paragraphs.map((paragraph, index) => (
+                  <p key={index} dangerouslySetInnerHTML={{ __html: paragraph }} />
+                ))}
+                <Link to="/about" className="btn-primary" style={{ marginTop: '1rem' }}>
+                  Learn More About Us
+                </Link>
+              </div>
+              <div className="about-image">
+                <img src={intro.image} alt={intro.imageAlt} />
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Features Section */}
+      {features && (
+        <section style={{ background: 'var(--bg-secondary)' }}>
+          <div className="container">
+            <div className="section-header">
+              <div className="section-label">{features.label}</div>
+              <h2 className="section-title">{features.title}</h2>
+            </div>
+            <div className="features-grid">
+              {features.cards.map((card, index) => (
+                <div key={index} className="feature-card">
+                  <div className="feature-icon">
+                    {card.icon === 'shield' && '🛡️'}
+                    {card.icon === 'handshake' && '🤝'}
+                    {card.icon === 'balance' && '⚖️'}
+                  </div>
+                  <h3 className="feature-title">{card.title}</h3>
+                  <p className="feature-desc">{card.description}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Why Choose Us Section */}
+      {whyChooseUs && (
+        <section>
+          <div className="container">
+            <div className="section-header">
+              <div className="section-label">{whyChooseUs.label}</div>
+              <h2 className="section-title">{whyChooseUs.title}</h2>
+            </div>
+            <div className="features-grid">
+              {whyChooseUs.cards.map((card, index) => (
+                <div key={index} className="feature-card">
+                  <div className="feature-icon">
+                    {card.icon === 'balance' && '⚖️'}
+                    {card.icon === 'document' && '📋'}
+                    {card.icon === 'chat' && '💬'}
+                  </div>
+                  <h3 className="feature-title">{card.title}</h3>
+                  <p className="feature-desc">{card.description}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* CTA Section */}
+      {cta && (
+        <section className="cta-section">
+          <div className="container">
+            <h2 className="cta-title">{cta.title}</h2>
+            <p className="cta-subtitle">{cta.subtitle}</p>
+            <div className="cta-buttons">
+              <Link to="/contact" className="btn-primary">
+                {cta.primaryBtn}
+              </Link>
+              <Link to="/services" className="btn-secondary">
+                <span>{cta.secondaryBtn}</span>
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
+    </div>
+  )
+}

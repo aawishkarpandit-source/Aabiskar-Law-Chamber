@@ -1,6 +1,6 @@
 # Aabiskar Law Chamber Website
 
-A modern, static website for Aabiskar Law Chamber, a premier law firm in Pokhara, Nepal. Built with vanilla HTML, CSS, and JavaScript. Deployed on Vercel.
+A modern, full-stack website for Aabiskar Law Chamber, a premier law firm in Pokhara, Nepal. Built with React, TypeScript, Supabase, and Tailwind CSS.
 
 ## Live Site
 
@@ -9,87 +9,138 @@ A modern, static website for Aabiskar Law Chamber, a premier law firm in Pokhara
 ## Features
 
 - **5 Pages**: Home, About, Practice Areas, Team, Contact
-- **Admin Panel**: Edit site content via GitHub API without touching code
+- **Database Backend**: Supabase for dynamic content management
 - **Dark/Light Mode**: Toggle with preference saved in localStorage
 - **Responsive Design**: Works on all devices (mobile, tablet, desktop)
 - **SEO Optimized**: Meta tags, Open Graph, JSON-LD structured data
-- **Performance**: Lazy CSS loading, content-visibility, skeleton loading states
-- **Contact Form**: Formspree integration with validation and rate limiting
+- **Performance**: Lazy loading, code splitting, optimized builds
+- **Contact Form**: Supabase integration with validation
 - **Cookie Consent**: GDPR-compliant cookie banner
-- **Scroll Animations**: IntersectionObserver-based reveal animations
+- **Scroll Animations**: Framer Motion-based reveal animations
 
 ## Tech Stack
 
-- Vanilla HTML, CSS, JS (no frameworks)
-- Font Awesome 6 for icons
-- Formspree for contact form
-- Google Fonts (Playfair Display + Lato)
-- GitHub API for admin content editing
+| Category | Technology |
+|----------|------------|
+| **Frontend** | React 19 + TypeScript 6 |
+| **Build** | Vite 8 + Tailwind CSS v4 |
+| **Routing** | React Router DOM v7 |
+| **Backend** | Supabase (Postgres + Storage) |
+| **Animations** | Framer Motion |
+| **SEO** | react-helmet-async |
+| **Hosting** | Vercel (auto-deploy from `main`) |
 
-## Architecture
+## Project Structure
 
 ```
-src/
-├── *.html              → All HTML pages (clean URLs)
-├── info/               → JSON data files (all content)
-│   ├── site.json       → Global config, nav, contact
-│   ├── content.json    → Homepage sections
-│   ├── stats.json      → Statistics
-│   ├── team.json       → Team members
-│   ├── services.json   → Practice areas
-│   ├── testimonials.json → Client testimonials
-│   └── faq.json        → FAQ items
-├── components/         → navbar.html + footer.html
-├── static/
-│   ├── css/            → style.css, navbar.css, responsive.css
-│   ├── js/             → 9 JS modules
-│   └── assets/         → brand/, icons/, images/
-├── admin.html          → Content admin panel
-├── robots.txt
-└── sitemap.xml
+/
+├── public/                → Static assets (brand, icons, images)
+├── src/
+│   ├── App.tsx            → All routes, lazy-loaded
+│   ├── main.tsx           → Entry point
+│   ├── index.css          → Tailwind v4 + theme tokens
+│   ├── data/              → Hardcoded static site text
+│   ├── lib/               → Supabase queries, utils
+│   ├── hooks/             → Theme, data fetching
+│   ├── components/        → Layout, Navbar, Footer, etc.
+│   ├── pages/             → 6 page components (lazy-loaded)
+│   └── types/             → TypeScript interfaces
+├── supabase-migration.sql → Full schema + seed data
+├── .env.example
+├── vercel.json
+├── README.md
+└── LICENSE
 ```
+
+## Setup
+
+```bash
+# 1. Install dependencies
+npm install
+
+# 2. Copy env template and fill in Supabase credentials
+cp .env.example .env
+# Edit .env with your Supabase URL and anon key
+
+# 3. Run DB migration in Supabase SQL Editor (supabase-migration.sql)
+
+# 4. Start dev server
+npm run dev
+
+# 5. Build for production
+npm run build
+```
+
+## Pages & Routes
+
+| Route | Page | Data Source |
+|-------|------|-------------|
+| `/` | Home | Supabase (stats, hero, features) + static text |
+| `/about` | About | Supabase (about, stats) |
+| `/services` | Practice Areas | Supabase (practice_areas) |
+| `/team` | Team | Supabase (team_members) |
+| `/contact` | Contact | Supabase (site_config, contact_submissions) |
 
 ## Data Flow
 
-1. `components.js` loads `site.json`, then injects navbar/footer HTML
-2. `navigation.js` renders nav links from `site.json`
-3. `main.js` detects which page and calls `data-loader.js` to render content
-4. All content comes from JSON files in `/info/`
+All dynamic content is fetched from Supabase at runtime. Static site text is hardcoded in components or fetched from the `site_config` table.
 
-## Adding/Editing Content
+### Dynamic queries in `src/lib/queries.ts`:
 
-### Option 1: Admin Panel
-1. Go to `/admin`
-2. Enter your GitHub Personal Access Token
-3. Edit content in the web interface
-4. Click Save to commit changes to GitHub
+- `getSiteConfig()` — global site configuration
+- `getNavItems()` — navigation links
+- `getHeroContent()` — homepage hero section
+- `getIntroContent()` — homepage intro section
+- `getFeaturesContent()` — homepage features
+- `getAboutContent()` — about section content
+- `getWhyChooseUsContent()` — why choose us section
+- `getCTAContent()` — call to action section
+- `getStats()` — homepage statistics
+- `getPracticeAreas()` — all practice areas
+- `getTeamMembers()` — all team members
+- `getTestimonials()` — client testimonials
+- `submitContactForm()` — contact form submission
 
-### Option 2: Edit JSON Files
-1. Edit files in `src/info/`
-2. Push to GitHub
-3. Vercel auto-deploys
+## Adding Content
 
-## Admin Panel Setup
+### New Practice Area
 
-1. Create a GitHub Personal Access Token (Settings → Developer settings → Personal access tokens)
-2. Grant `repo` scope
-3. Go to `/admin` on your site
-4. Enter the token and repository name (e.g., `username/repo-name`)
-5. Edit any JSON file through the admin interface
+1. Insert into Supabase `practice_areas` table
 
-## Deployment
+### New Team Member
 
-### Vercel
-1. Connect your GitHub repo to Vercel
-2. Vercel auto-deploys on every push to `main`
-3. Build command: `cp -r src/* .` (configured in vercel.json)
+1. Insert into Supabase `team_members` table
 
-### Manual
+### New Testimonial
+
+1. Insert into Supabase `testimonials` table
+
+### Update Site Config
+
+1. Update the `site_config` table in Supabase
+
+## Environment Variables
+
+Required in `.env`:
+
+```
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-key
+```
+
+Optional:
+
+```
+VITE_GA4_ID=G-XXXXXXXXXX
+```
+
+## Development
+
 ```bash
-# Build
-cp -r src/* .
-
-# The root directory is now the site
+npm run dev     # Start Vite dev server
+npm run build   # TypeScript check + production build
+npm run preview # Preview production build locally
+npm run lint    # Run ESLint
 ```
 
 ## Color Scheme
