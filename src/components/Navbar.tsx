@@ -31,7 +31,7 @@ export default function Navbar() {
       <div className="header-inner">
         <Link to="/" className="logo">
           <img
-            src="/static/assets/brand/logo_icon.png"
+            src="/static/assets/brand/logo.svg"
             alt="Aabiskar Law Chamber"
             className="logo-img"
           />

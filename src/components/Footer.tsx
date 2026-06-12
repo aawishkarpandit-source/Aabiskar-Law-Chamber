@@ -24,7 +24,7 @@ export default function Footer() {
           <div className="footer-brand">
             <Link to="/" className="footer-logo-link">
               <img
-                src="/static/assets/brand/logo_icon.png"
+                src="/static/assets/brand/logo.svg"
                 alt="Aabiskar Law Chamber"
                 className="footer-logo"
               />

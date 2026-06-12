@@ -5,7 +5,7 @@
   "description": "Aabiskar Law Chamber is the premier law firm in Pokhara, Nepal. Led by Adv. Hari Prasad Pandit, we provide expert legal services in criminal, property, and corporate law.",
   "url": "https://aabiskar-law-chamber.vercel.app",
   "logo": "/static/assets/brand/logo.png",
-  "logoIcon": "/static/assets/brand/logo_icon.png",
+  "logoIcon": "/static/assets/brand/logo.svg",
   "email": "pandithari912@gmail.com",
   "phone": "+9779856032810",
   "whatsapp": "+9779856032810",

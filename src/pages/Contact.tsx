@@ -339,7 +339,7 @@ export default function Contact() {
       </section>
 
       {/* Map Section */}
-      <section style={{ height: '400px', background: '#e9ecef' }}>
+      <section className="map-section">
         <iframe
           title="Aabiskar Law Chamber Location"
           src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3532.847452106653!2d83.9855!3d28.2096!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39959415e5a5a5a5%3A0x1234567890abcdef!2sPokhara%2C%20Nepal!5e0!3m2!1sen!2snp!4v1234567890"
