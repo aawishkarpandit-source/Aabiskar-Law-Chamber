@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { getSiteConfig, submitContactForm } from '../lib/queries'
 import type { SiteConfig, ContactSubmission, ContactFormErrors } from '../types'
+import { LocationIcon, PhoneIcon, EmailIcon, ClockIcon, CheckIcon } from '../components/Icons'
 
 export default function Contact() {
   const [siteConfig, setSiteConfig] = useState<SiteConfig | null>(null)
@@ -142,7 +143,7 @@ export default function Contact() {
               <h2>Contact Information</h2>
 
               <div className="contact-item">
-                <div className="contact-icon">📍</div>
+                <div className="contact-icon"><LocationIcon size={22} /></div>
                 <div>
                   <div className="contact-label">Office Address</div>
                   <div className="contact-value">
@@ -158,7 +159,7 @@ export default function Contact() {
               </div>
 
               <div className="contact-item">
-                <div className="contact-icon">📞</div>
+                <div className="contact-icon"><PhoneIcon size={22} /></div>
                 <div>
                   <div className="contact-label">Phone</div>
                   <div className="contact-value">{siteConfig?.phone}</div>
@@ -166,7 +167,7 @@ export default function Contact() {
               </div>
 
               <div className="contact-item">
-                <div className="contact-icon">✉️</div>
+                <div className="contact-icon"><EmailIcon size={22} /></div>
                 <div>
                   <div className="contact-label">Email</div>
                   <div className="contact-value">{siteConfig?.email}</div>
@@ -174,7 +175,7 @@ export default function Contact() {
               </div>
 
               <div className="contact-item">
-                <div className="contact-icon">🕐</div>
+                <div className="contact-icon"><ClockIcon size={22} /></div>
                 <div>
                   <div className="contact-label">Office Hours</div>
                   <div className="contact-value">
@@ -194,7 +195,7 @@ export default function Contact() {
             <div className="contact-form">
               {submitted ? (
                 <div style={{ textAlign: 'center', padding: '3rem 0' }}>
-                  <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>✅</div>
+                  <div style={{ marginBottom: '1rem', color: '#059669' }}><CheckIcon size={64} /></div>
                   <h3 style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>
                     Thank You!
                   </h3>

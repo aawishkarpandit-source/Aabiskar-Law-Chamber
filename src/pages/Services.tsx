@@ -2,13 +2,15 @@ import { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { getPracticeAreas } from '../lib/queries'
 import type { PracticeArea } from '../types'
+import { BalanceIcon, HomeIcon, PeopleIcon, BriefcaseIcon, ShieldIcon } from '../components/Icons'
+import type { ReactNode } from 'react'
 
-const iconMap: Record<string, string> = {
-  gavel: '⚖️',
-  home: '🏠',
-  people: '👨‍👩‍👧‍👦',
-  briefcase: '💼',
-  shield: '🛡️',
+const iconMap: Record<string, ReactNode> = {
+  gavel: <BalanceIcon size={28} />,
+  home: <HomeIcon size={28} />,
+  people: <PeopleIcon size={28} />,
+  briefcase: <BriefcaseIcon size={28} />,
+  shield: <ShieldIcon size={28} />,
 }
 
 export default function Services() {
@@ -67,7 +69,7 @@ export default function Services() {
             {services.map((service) => (
               <div key={service.id} id={service.id} className="service-card">
                 <div className="service-icon">
-                  {iconMap[service.icon] || '⚖️'}
+                  {iconMap[service.icon] || <BalanceIcon size={28} />}
                 </div>
                 <h3>{service.title}</h3>
                 <p>{service.description}</p>

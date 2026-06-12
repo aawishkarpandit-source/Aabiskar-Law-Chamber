@@ -1,0 +1,430 @@
+/* ========================================
+   AABISKAR LAW CHAMBER - NAVBAR STYLES
+   ========================================
+   Fixed header, mobile menu, scroll-to-top
+   ======================================== */
+
+#header-placeholder {
+    min-height: var(--header-height);
+    display: block;
+}
+
+/* ----------------------------------------------------------------
+   HEADER — Fixed with backdrop blur
+   ---------------------------------------------------------------- */
+.main-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: var(--header-height);
+    display: flex;
+    align-items: center;
+    z-index: 1000;
+    background: rgba(10, 25, 47, 0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid transparent;
+    transition: var(--transition-base);
+}
+
+[data-theme="dark"] .main-header {
+    background: rgba(10, 25, 47, 0.95);
+}
+
+.main-header.scrolled {
+    background: rgba(10, 25, 47, 0.8);
+    border-bottom-color: rgba(197, 160, 89, 0.15);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .main-header.scrolled {
+    background: rgba(10, 25, 47, 0.85);
+}
+
+/* ----------------------------------------------------------------
+   HEADER INNER — Flex layout
+   ---------------------------------------------------------------- */
+.header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0.5rem 1.5rem 0.25rem;
+}
+
+/* ----------------------------------------------------------------
+   LOGO
+   ---------------------------------------------------------------- */
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.logo img {
+    height: 46px;
+    width: auto;
+    transition: transform var(--transition-base);
+}
+
+.logo:hover img {
+    transform: rotate(-3deg) scale(1.05);
+}
+
+.logo-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.logo-name {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: #ffffff;
+    line-height: 1;
+}
+
+.logo-tag {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--brand-accent);
+    font-family: 'Lato', sans-serif;
+}
+
+/* ----------------------------------------------------------------
+   DESKTOP NAV — Hidden on mobile
+   ---------------------------------------------------------------- */
+.nav-desktop {
+    display: none;
+    align-items: center;
+    gap: 2.25rem;
+}
+
+.nav-link {
+    font-family: 'Lato', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    color: rgba(255, 255, 255, 0.75);
+    position: relative;
+    padding: 0.85rem 0;
+    transition: color 0.3s ease;
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--brand-accent);
+    transition: var(--transition-base);
+    border-radius: var(--radius-full);
+}
+
+.nav-link:hover,
+.nav-link.active {
+    color: #ffffff;
+}
+
+.nav-link:hover::after,
+.nav-link.active::after {
+    width: 100%;
+}
+
+/* ----------------------------------------------------------------
+   HEADER ACTIONS — Right side controls
+   ---------------------------------------------------------------- */
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 0;
+}
+
+/* ----------------------------------------------------------------
+   THEME TOGGLE BUTTON
+   ---------------------------------------------------------------- */
+.theme-toggle {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-full);
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.75);
+    transition: var(--transition-base);
+}
+
+.theme-toggle:hover {
+    border-color: var(--brand-accent);
+    color: var(--brand-accent);
+    transform: rotate(15deg);
+    background: rgba(197, 160, 89, 0.1);
+}
+
+[data-theme="dark"] .theme-toggle {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="dark"] .theme-toggle:hover {
+    background: rgba(197, 160, 89, 0.15);
+}
+
+.theme-icon {
+    display: inline;
+    vertical-align: middle;
+}
+
+/* ----------------------------------------------------------------
+   CTA BUTTON IN HEADER
+   ---------------------------------------------------------------- */
+.btn-header-cta {
+    background: var(--brand-accent);
+    color: var(--brand-primary);
+    padding: 0.7rem 1.75rem;
+    border-radius: var(--radius-full);
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    box-shadow: 0 2px 12px rgba(197, 160, 89, 0.3);
+    transition: var(--transition-base);
+    font-family: 'Lato', sans-serif;
+    white-space: nowrap;
+}
+
+.btn-header-cta-desktop { display: none; }
+
+.btn-header-cta:hover {
+    background: var(--brand-accent-light);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(197, 160, 89, 0.4);
+}
+
+/* ----------------------------------------------------------------
+   BURGER MENU — 3 lines that animate to X
+   ---------------------------------------------------------------- */
+.menu-toggle {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 0.6rem;
+    transition: var(--transition-base);
+}
+
+.menu-toggle:hover span {
+    background: var(--brand-accent);
+}
+
+.menu-toggle span {
+    width: 24px;
+    height: 2px;
+    background: #ffffff;
+    transition: var(--transition-base);
+    border-radius: 2px;
+}
+
+[data-theme="dark"] .menu-toggle span {
+    background: rgba(255, 255, 255, 0.9);
+}
+
+/* Animate burger to X when active */
+.menu-toggle.active span:nth-child(1) {
+    transform: rotate(45deg) translate(5px, 5px);
+}
+
+.menu-toggle.active span:nth-child(2) {
+    opacity: 0;
+    transform: translateX(-10px);
+}
+
+.menu-toggle.active span:nth-child(3) {
+    transform: rotate(-45deg) translate(5px, -5px);
+}
+
+/* ----------------------------------------------------------------
+   MOBILE OVERLAY — Background dimmer
+   ---------------------------------------------------------------- */
+.mobile-overlay {
+    position: fixed;
+    top: var(--header-height);
+    left: 0;
+    width: 100%;
+    height: calc(100vh - var(--header-height));
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 998;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--transition-base);
+}
+
+.mobile-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* ----------------------------------------------------------------
+   MOBILE MENU — Slide from right
+   ---------------------------------------------------------------- */
+.mobile-menu {
+    position: fixed;
+    top: var(--header-height);
+    right: 0;
+    width: 300px;
+    max-width: 85vw;
+    height: calc(100vh - var(--header-height));
+    background: var(--bg-primary);
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+    transform: translateX(100%);
+    transition: transform var(--transition-slow);
+    overflow-y: auto;
+    border-left: 1px solid var(--border-light);
+}
+
+.mobile-menu.active {
+    transform: translateX(0);
+}
+
+.mobile-menu-header {
+    display: flex;
+    justify-content: flex-end;
+    padding: 1rem 1.25rem;
+    flex-shrink: 0;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.mobile-menu-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 0.25rem;
+    padding: 1rem 1.25rem;
+}
+
+.mobile-menu-footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1.25rem;
+    flex-shrink: 0;
+    border-top: 1px solid var(--border-light);
+}
+
+.mobile-menu .nav-link {
+    font-size: 1.15rem;
+    font-weight: 600;
+    padding: 0.85rem 1rem;
+    text-align: left;
+    display: block;
+    width: 100%;
+    color: var(--text-primary);
+    border-radius: var(--radius-md);
+    transition: var(--transition-base);
+}
+
+.mobile-menu .nav-link:hover,
+.mobile-menu .nav-link.active {
+    background: rgba(197, 160, 89, 0.08);
+    color: var(--brand-accent);
+}
+
+.mobile-menu .btn-header-cta {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+    display: flex;
+    min-height: 44px;
+}
+
+/* ----------------------------------------------------------------
+   MENU CLOSE BUTTON
+   ---------------------------------------------------------------- */
+.menu-close {
+    width: 44px;
+    height: 44px;
+    background: var(--bg-secondary);
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border-light);
+    transition: var(--transition-base);
+}
+
+.menu-close:hover {
+    background: var(--bg-tertiary);
+    border-color: var(--brand-accent);
+}
+
+.menu-close .icon-current {
+    width: 24px;
+    height: 24px;
+}
+
+/* ----------------------------------------------------------------
+   ICON HELPERS — Inherit text color
+   ---------------------------------------------------------------- */
+.icon-current {
+    display: inline;
+    vertical-align: middle;
+}
+
+[data-theme="dark"] .icon-current {
+    filter: invert(1);
+}
+
+/* ----------------------------------------------------------------
+   SCROLL-TO-TOP BUTTON — Fixed bottom-right
+   ---------------------------------------------------------------- */
+.scroll-top-btn {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 999;
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-full);
+    background: var(--brand-accent);
+    color: var(--brand-primary);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(20px);
+    pointer-events: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow-lg);
+}
+
+.scroll-top-btn.visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.scroll-top-btn:hover {
+    background: var(--brand-accent-light);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-xl);
+}
+
+.scroll-top-btn svg {
+    width: 22px;
+    height: 22px;
+}

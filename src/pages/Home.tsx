@@ -16,6 +16,7 @@ import type {
   CTAContent,
   Stat,
 } from '../types'
+import { ShieldIcon, HandshakeIcon, BalanceIcon, DocumentIcon, ChatIcon } from '../components/Icons'
 
 export default function Home() {
   const [hero, setHero] = useState<HeroContent | null>(null)
@@ -148,9 +149,9 @@ export default function Home() {
               {features.cards.map((card, index) => (
                 <div key={index} className="feature-card">
                   <div className="feature-icon">
-                    {card.icon === 'shield' && '🛡️'}
-                    {card.icon === 'handshake' && '🤝'}
-                    {card.icon === 'balance' && '⚖️'}
+                    {card.icon === 'shield' && <ShieldIcon size={32} />}
+                    {card.icon === 'handshake' && <HandshakeIcon size={32} />}
+                    {card.icon === 'balance' && <BalanceIcon size={32} />}
                   </div>
                   <h3 className="feature-title">{card.title}</h3>
                   <p className="feature-desc">{card.description}</p>
@@ -173,9 +174,9 @@ export default function Home() {
               {whyChooseUs.cards.map((card, index) => (
                 <div key={index} className="feature-card">
                   <div className="feature-icon">
-                    {card.icon === 'balance' && '⚖️'}
-                    {card.icon === 'document' && '📋'}
-                    {card.icon === 'chat' && '💬'}
+                    {card.icon === 'balance' && <BalanceIcon size={32} />}
+                    {card.icon === 'document' && <DocumentIcon size={32} />}
+                    {card.icon === 'chat' && <ChatIcon size={32} />}
                   </div>
                   <h3 className="feature-title">{card.title}</h3>
                   <p className="feature-desc">{card.description}</p>

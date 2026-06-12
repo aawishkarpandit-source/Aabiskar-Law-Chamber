@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
 import { getSeniorMembers, getAssociates } from '../lib/queries'
 import type { TeamMember } from '../types'
+import { BalanceIcon, PhoneIcon, UserIcon } from '../components/Icons'
 
 export default function Team() {
   const [seniors, setSeniors] = useState<TeamMember[]>([])
@@ -84,10 +85,9 @@ export default function Team() {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        fontSize: '2rem',
                       }}
                     >
-                      ⚖️
+                      <BalanceIcon size={32} />
                     </div>
                   )}
                 </div>
@@ -102,7 +102,7 @@ export default function Team() {
                   )}
                   {member.phone && member.phone !== 'Coming Soon' && (
                     <div className="team-phone">
-                      📞 <a href={`tel:${member.phone}`}>{member.phone}</a>
+                      <PhoneIcon size={14} className="inline-block" style={{ verticalAlign: 'middle', marginRight: '4px' }} /> <a href={`tel:${member.phone}`}>{member.phone}</a>
                     </div>
                   )}
                 </div>
@@ -139,10 +139,9 @@ export default function Team() {
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          fontSize: '2rem',
                         }}
                       >
-                        👤
+                        <UserIcon size={32} />
                       </div>
                     )}
                   </div>

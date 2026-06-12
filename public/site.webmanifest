@@ -1,0 +1,16 @@
+{
+  "name": "Aabiskar Law Chamber",
+  "short_name": "Aabiskar Law",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a192f",
+  "theme_color": "#0a192f",
+  "description": "Premier law firm in Pokhara, Nepal. Expert legal services in criminal, property, and corporate law.",
+  "icons": [
+    {
+      "src": "/static/assets/brand/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

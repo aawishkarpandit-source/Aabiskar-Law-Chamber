@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useTheme } from '../hooks/useTheme'
+import { SunIcon, MoonIcon, CloseIcon } from './Icons'
 
 const navLinks = [
   { label: 'Home', href: '/' },
@@ -59,7 +60,7 @@ export default function Navbar() {
             className="theme-toggle"
             aria-label="Toggle theme"
           >
-            <span className="theme-icon">{isDark ? '☀️' : '🌙'}</span>
+            <span className="theme-icon">{isDark ? <SunIcon size={20} /> : <MoonIcon size={20} />}</span>
           </button>
 
           <Link to="/contact" className="btn-header-cta btn-header-cta-desktop">
@@ -92,7 +93,7 @@ export default function Navbar() {
             className="menu-close"
             aria-label="Close menu"
           >
-            ✕
+            <CloseIcon size={20} />
           </button>
         </div>
         <div className="mobile-menu-body">

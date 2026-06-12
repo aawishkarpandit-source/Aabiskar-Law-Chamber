@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { getAboutContent, getStats } from '../lib/queries'
 import type { AboutContent, Stat } from '../types'
+import { BalanceIcon, StarIcon, HeartIcon } from '../components/Icons'
 
 export default function About() {
   const [about, setAbout] = useState<AboutContent | null>(null)
@@ -109,19 +110,19 @@ export default function About() {
                 title: 'Integrity',
                 description:
                   'We uphold the highest ethical standards in all our dealings, ensuring transparency and honesty with every client.',
-                icon: '⚖️',
+                icon: <BalanceIcon size={32} />,
               },
               {
                 title: 'Excellence',
                 description:
                   'We strive for excellence in every case we handle, leaving no stone unturned in our pursuit of justice.',
-                icon: '⭐',
+                icon: <StarIcon size={32} />,
               },
               {
                 title: 'Compassion',
                 description:
                   'We understand that legal matters can be stressful, and we treat every client with empathy and understanding.',
-                icon: '❤️',
+                icon: <HeartIcon size={32} />,
               },
             ].map((value, index) => (
               <div key={index} className="feature-card">

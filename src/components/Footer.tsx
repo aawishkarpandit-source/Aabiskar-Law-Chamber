@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { HeartIcon } from './Icons'
 
 const footerLinks = {
   quickLinks: [
@@ -91,7 +92,7 @@ export default function Footer() {
             reserved.
           </p>
           <p className="footer-credit">
-            Made with ❤️ by Awishkar Pandit
+            Made with <HeartIcon size={14} className="inline-block" style={{ color: '#c5a059', verticalAlign: 'middle' }} /> by Awishkar Pandit
           </p>
         </div>
       </div>
