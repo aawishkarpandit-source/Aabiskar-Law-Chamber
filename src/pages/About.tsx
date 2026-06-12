@@ -4,6 +4,8 @@ import { getAboutContent, getStats } from '../lib/queries'
 import type { AboutContent, Stat } from '../types'
 import { BalanceIcon, StarIcon, HeartIcon } from '../components/Icons'
 
+const SITE_URL = 'https://aabiskar-law-chamber.vercel.app'
+
 export default function About() {
   const [about, setAbout] = useState<AboutContent | null>(null)
   const [stats, setStats] = useState<Stat[]>([])
@@ -40,11 +42,38 @@ export default function About() {
     <>
       <Helmet>
         <title>About Us | Aabiskar Law Chamber</title>
-        <meta
-          name="description"
-          content="Learn about Aabiskar Law Chamber - Pokhara's most trusted legal advisors with over 15 years of experience."
-        />
+        <meta name="description" content="Learn about Aabiskar Law Chamber - Pokhara's most trusted legal advisors with over 15 years of experience." />
+        <link rel="canonical" href={SITE_URL + '/about'} />
+        <meta property="og:title" content="About Us | Aabiskar Law Chamber" />
+        <meta property="og:description" content="Learn about Aabiskar Law Chamber - Pokhara's most trusted legal advisors with over 15 years of experience." />
+        <meta property="og:url" content={SITE_URL + '/about'} />
+        <meta property="og:image" content={SITE_URL + '/og-image.png'} />
+        <meta name="twitter:title" content="About Us | Aabiskar Law Chamber" />
+        <meta name="twitter:description" content="Learn about Aabiskar Law Chamber - Pokhara's most trusted legal advisors with over 15 years of experience." />
+        <meta name="twitter:image" content={SITE_URL + '/og-image.png'} />
       </Helmet>
+
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "AboutPage",
+        "name": "About Aabiskar Law Chamber",
+        "url": SITE_URL + "/about",
+        "mainEntity": {
+          "@type": "LegalService",
+          "@id": SITE_URL + "/#organization",
+          "name": "Aabiskar Law Chamber",
+          "url": SITE_URL
+        }
+      }) }} />
+
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Home", "item": SITE_URL },
+          { "@type": "ListItem", "position": 2, "name": "About Us", "item": SITE_URL + "/about" }
+        ]
+      }) }} />
 
       {/* Page Header */}
       <section className="page-header">
@@ -74,6 +103,9 @@ export default function About() {
                 <img
                   src="https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=600&q=80"
                   alt="Legal Consultation"
+                  loading="lazy"
+                  width="600"
+                  height="400"
                 />
               </div>
             </div>

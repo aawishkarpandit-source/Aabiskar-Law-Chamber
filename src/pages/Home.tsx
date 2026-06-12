@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { Helmet } from 'react-helmet-async'
 import {
   getHeroContent,
   getIntroContent,
@@ -17,6 +18,8 @@ import type {
   Stat,
 } from '../types'
 import { ShieldIcon, HandshakeIcon, BalanceIcon, DocumentIcon, ChatIcon } from '../components/Icons'
+
+const SITE_URL = 'https://aabiskar-law-chamber.vercel.app'
 
 export default function Home() {
   const [hero, setHero] = useState<HeroContent | null>(null)
@@ -68,6 +71,48 @@ export default function Home() {
 
   return (
     <div>
+      <Helmet>
+        <title>Aabiskar Law Chamber | Best Law Firm in Pokhara, Nepal</title>
+        <meta name="description" content="Aabiskar Law Chamber is the premier law firm in Pokhara, Nepal. Led by Adv. Hari Prasad Pandit, we provide expert legal services in criminal, property, and corporate law." />
+        <link rel="canonical" href={SITE_URL + '/'} />
+        <meta property="og:title" content="Aabiskar Law Chamber | Best Law Firm in Pokhara" />
+        <meta property="og:description" content="Premier law firm in Pokhara, Nepal. Expert legal services in criminal, property, and corporate law. Trusted by 1000+ clients." />
+        <meta property="og:url" content={SITE_URL + '/'} />
+        <meta property="og:image" content={SITE_URL + '/og-image.png'} />
+        <meta name="twitter:title" content="Aabiskar Law Chamber | Best Law Firm in Pokhara" />
+        <meta name="twitter:description" content="Premier law firm in Pokhara, Nepal. Expert legal services in criminal, property, and corporate law." />
+        <meta name="twitter:image" content={SITE_URL + '/og-image.png'} />
+      </Helmet>
+
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "LegalService",
+        "@id": SITE_URL + "/#organization",
+        "name": "Aabiskar Law Chamber",
+        "url": SITE_URL,
+        "logo": SITE_URL + "/static/assets/brand/logo.svg",
+        "description": "Premier law firm in Pokhara, Nepal. Expert legal services in criminal, property, and corporate law.",
+        "telephone": "+9779856032810",
+        "email": "pandithari912@gmail.com",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "Rastra Bank Chowk",
+          "addressLocality": "Pokhara",
+          "addressRegion": "Gandaki Province",
+          "addressCountry": "NP"
+        },
+        "sameAs": [
+          "https://facebook.com/advhari.pandit",
+          "https://wa.me/9779856032810"
+        ],
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "telephone": "+9779856032810",
+          "contactType": "customer service",
+          "email": "pandithari912@gmail.com"
+        }
+      }) }} />
+
       {/* Hero Section */}
       {hero && (
         <section className="hero">
@@ -130,7 +175,7 @@ export default function Home() {
                 </Link>
               </div>
               <div className="about-image">
-                <img src={intro.image} alt={intro.imageAlt} />
+                <img src={intro.image} alt={intro.imageAlt} loading="lazy" width="600" height="400" />
               </div>
             </div>
           </div>

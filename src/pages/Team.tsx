@@ -5,6 +5,8 @@ import { getSeniorMembers, getAssociates } from '../lib/queries'
 import type { TeamMember } from '../types'
 import { BalanceIcon, PhoneIcon, UserIcon } from '../components/Icons'
 
+const SITE_URL = 'https://aabiskar-law-chamber.vercel.app'
+
 export default function Team() {
   const [seniors, setSeniors] = useState<TeamMember[]>([])
   const [associates, setAssociates] = useState<TeamMember[]>([])
@@ -41,11 +43,25 @@ export default function Team() {
     <>
       <Helmet>
         <title>Our Team | Aabiskar Law Chamber</title>
-        <meta
-          name="description"
-          content="Meet our experienced legal team led by Adv. Hari Prasad Pandit with over 20 years of expertise in criminal, property, and corporate law."
-        />
+        <meta name="description" content="Meet our experienced legal team led by Adv. Hari Prasad Pandit with over 20 years of expertise in criminal, property, and corporate law." />
+        <link rel="canonical" href={SITE_URL + '/team'} />
+        <meta property="og:title" content="Our Team | Aabiskar Law Chamber" />
+        <meta property="og:description" content="Meet our experienced legal team led by Adv. Hari Prasad Pandit with over 20 years of expertise in criminal, property, and corporate law." />
+        <meta property="og:url" content={SITE_URL + '/team'} />
+        <meta property="og:image" content={SITE_URL + '/og-image.png'} />
+        <meta name="twitter:title" content="Our Team | Aabiskar Law Chamber" />
+        <meta name="twitter:description" content="Meet our experienced legal team led by Adv. Hari Prasad Pandit with over 20 years of expertise in criminal, property, and corporate law." />
+        <meta name="twitter:image" content={SITE_URL + '/og-image.png'} />
       </Helmet>
+
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Home", "item": SITE_URL },
+          { "@type": "ListItem", "position": 2, "name": "Our Team", "item": SITE_URL + "/team" }
+        ]
+      }) }} />
 
       {/* Page Header */}
       <section className="page-header">
@@ -74,6 +90,9 @@ export default function Team() {
                     <img
                       src={member.image}
                       alt={member.name}
+                      loading="lazy"
+                      width="90"
+                      height="90"
                       style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                     />
                   ) : (
@@ -128,6 +147,9 @@ export default function Team() {
                       <img
                         src={member.image}
                         alt={member.name}
+                        loading="lazy"
+                        width="90"
+                        height="90"
                         style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                       />
                     ) : (

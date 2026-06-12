@@ -6,6 +6,8 @@ export default function NotFound() {
     <>
       <Helmet>
         <title>404 - Page Not Found | Aabiskar Law Chamber</title>
+        <meta name="robots" content="noindex, nofollow" />
+        <link rel="canonical" href="https://aabiskar-law-chamber.vercel.app/404" />
       </Helmet>
 
       <section

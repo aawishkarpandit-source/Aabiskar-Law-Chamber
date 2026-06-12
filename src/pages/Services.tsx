@@ -5,6 +5,8 @@ import type { PracticeArea } from '../types'
 import { BalanceIcon, HomeIcon, PeopleIcon, BriefcaseIcon, ShieldIcon } from '../components/Icons'
 import type { ReactNode } from 'react'
 
+const SITE_URL = 'https://aabiskar-law-chamber.vercel.app'
+
 const iconMap: Record<string, ReactNode> = {
   gavel: <BalanceIcon size={28} />,
   home: <HomeIcon size={28} />,
@@ -44,11 +46,25 @@ export default function Services() {
     <>
       <Helmet>
         <title>Practice Areas | Aabiskar Law Chamber</title>
-        <meta
-          name="description"
-          content="Explore our comprehensive legal services including criminal litigation, property law, family law, corporate law, and more."
-        />
+        <meta name="description" content="Explore our comprehensive legal services including criminal litigation, property law, family law, corporate law, banking &amp; finance, and cyber law in Pokhara, Nepal." />
+        <link rel="canonical" href={SITE_URL + '/services'} />
+        <meta property="og:title" content="Practice Areas | Aabiskar Law Chamber" />
+        <meta property="og:description" content="Explore our comprehensive legal services including criminal litigation, property law, family law, corporate law, and more." />
+        <meta property="og:url" content={SITE_URL + '/services'} />
+        <meta property="og:image" content={SITE_URL + '/og-image.png'} />
+        <meta name="twitter:title" content="Practice Areas | Aabiskar Law Chamber" />
+        <meta name="twitter:description" content="Explore our comprehensive legal services including criminal litigation, property law, family law, corporate law, and more." />
+        <meta name="twitter:image" content={SITE_URL + '/og-image.png'} />
       </Helmet>
+
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Home", "item": SITE_URL },
+          { "@type": "ListItem", "position": 2, "name": "Practice Areas", "item": SITE_URL + "/services" }
+        ]
+      }) }} />
 
       {/* Page Header */}
       <section className="page-header">

@@ -4,6 +4,8 @@ import { getSiteConfig, submitContactForm } from '../lib/queries'
 import type { SiteConfig, ContactSubmission, ContactFormErrors } from '../types'
 import { LocationIcon, PhoneIcon, EmailIcon, ClockIcon, CheckIcon } from '../components/Icons'
 
+const SITE_URL = 'https://aabiskar-law-chamber.vercel.app'
+
 export default function Contact() {
   const [siteConfig, setSiteConfig] = useState<SiteConfig | null>(null)
   const [loading, setLoading] = useState(true)
@@ -116,11 +118,46 @@ export default function Contact() {
     <>
       <Helmet>
         <title>Contact Us | Aabiskar Law Chamber</title>
-        <meta
-          name="description"
-          content="Get in touch with Aabiskar Law Chamber. Schedule a consultation with our expert legal team in Pokhara, Nepal."
-        />
+        <meta name="description" content="Get in touch with Aabiskar Law Chamber. Schedule a consultation with our expert legal team in Pokhara, Nepal." />
+        <link rel="canonical" href={SITE_URL + '/contact'} />
+        <meta property="og:title" content="Contact Us | Aabiskar Law Chamber" />
+        <meta property="og:description" content="Get in touch with Aabiskar Law Chamber. Schedule a consultation with our expert legal team in Pokhara, Nepal." />
+        <meta property="og:url" content={SITE_URL + '/contact'} />
+        <meta property="og:image" content={SITE_URL + '/og-image.png'} />
+        <meta name="twitter:title" content="Contact Us | Aabiskar Law Chamber" />
+        <meta name="twitter:description" content="Get in touch with Aabiskar Law Chamber. Schedule a consultation with our expert legal team in Pokhara, Nepal." />
+        <meta name="twitter:image" content={SITE_URL + '/og-image.png'} />
       </Helmet>
+
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "ContactPage",
+        "name": "Contact Aabiskar Law Chamber",
+        "url": SITE_URL + "/contact",
+        "mainEntity": {
+          "@type": "LegalService",
+          "@id": SITE_URL + "/#organization",
+          "name": "Aabiskar Law Chamber",
+          "telephone": "+9779856032810",
+          "email": "pandithari912@gmail.com",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "Rastra Bank Chowk",
+            "addressLocality": "Pokhara",
+            "addressRegion": "Gandaki Province",
+            "addressCountry": "NP"
+          }
+        }
+      }) }} />
+
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Home", "item": SITE_URL },
+          { "@type": "ListItem", "position": 2, "name": "Contact Us", "item": SITE_URL + "/contact" }
+        ]
+      }) }} />
 
       {/* Page Header */}
       <section className="page-header">
