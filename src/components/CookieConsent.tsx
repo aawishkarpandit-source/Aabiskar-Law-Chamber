@@ -1,14 +1,12 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 
 export default function CookieConsent() {
-  const [isVisible, setIsVisible] = useState(false)
-
-  useEffect(() => {
-    const consent = localStorage.getItem('cookie-consent')
-    if (!consent) {
-      setIsVisible(true)
+  const [isVisible, setIsVisible] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return !localStorage.getItem('cookie-consent')
     }
-  }, [])
+    return false
+  })
 
   const handleAccept = () => {
     localStorage.setItem('cookie-consent', 'accepted')

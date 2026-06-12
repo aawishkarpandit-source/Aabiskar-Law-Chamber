@@ -9,6 +9,7 @@ export default function Contact() {
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [errors, setErrors] = useState<ContactFormErrors>({})
+  const [submitError, setSubmitError] = useState<string | null>(null)
 
   const [formData, setFormData] = useState<ContactSubmission>({
     name: '',
@@ -66,6 +67,7 @@ export default function Contact() {
     }
 
     setSubmitting(true)
+    setSubmitError(null)
 
     try {
       const success = await submitContactForm(formData)
@@ -79,11 +81,11 @@ export default function Contact() {
           message: '',
         })
       } else {
-        alert('Failed to submit form. Please try again.')
+        setSubmitError('Failed to submit form. Please try again.')
       }
     } catch (error) {
       console.error('Error submitting form:', error)
-      alert('An error occurred. Please try again.')
+      setSubmitError('An error occurred. Please try again.')
     } finally {
       setSubmitting(false)
     }
@@ -306,6 +308,21 @@ export default function Contact() {
                       <span className="error-message">{errors.message}</span>
                     )}
                   </div>
+
+                  {submitError && (
+                    <div
+                      style={{
+                        padding: '0.75rem 1rem',
+                        background: '#FEE2E2',
+                        color: '#DC2626',
+                        borderRadius: '0.5rem',
+                        fontSize: '0.9rem',
+                        marginBottom: '1rem',
+                      }}
+                    >
+                      {submitError}
+                    </div>
+                  )}
 
                   <button
                     type="submit"

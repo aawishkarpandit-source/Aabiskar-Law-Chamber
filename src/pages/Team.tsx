@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { Helmet } from 'react-helmet-async'
 import { getSeniorMembers, getAssociates } from '../lib/queries'
 import type { TeamMember } from '../types'
@@ -167,9 +168,9 @@ export default function Team() {
             Schedule a consultation with our experienced legal team today.
           </p>
           <div className="cta-buttons">
-            <a href="/contact" className="btn-primary">
+            <Link to="/contact" className="btn-primary">
               Contact Us
-            </a>
+            </Link>
           </div>
         </div>
       </section>
