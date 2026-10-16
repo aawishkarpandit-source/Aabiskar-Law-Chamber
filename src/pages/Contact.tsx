@@ -1,361 +1,461 @@
-import { useState, useEffect } from 'react'
-import { Helmet } from 'react-helmet-async'
-import { getSiteConfig, submitContactForm } from '../lib/queries'
-import type { SiteConfig, ContactSubmission, ContactFormErrors } from '../types'
-import { LocationIcon, PhoneIcon, EmailIcon, ClockIcon, CheckIcon } from '../components/Icons'
+import { useState, useEffect } from "react";
+import SEO from "../components/SEO";
+import Reveal from "../components/Reveal";
+import PageHeader from "../components/PageHeader";
+import {
+  LocationIcon,
+  PhoneIcon,
+  EmailIcon,
+  ClockIcon,
+  CheckIcon,
+} from "../components/Icons";
+import { getSiteConfig, submitContactForm } from "../lib/queries";
+import type { SiteConfig, ContactSubmission, ContactFormErrors } from "../types";
+import { SITE_URL, FIRM } from "../lib/site";
 
-const SITE_URL = 'https://aabiskar-law-chamber.vercel.app'
+const SUBJECT_OPTIONS = [
+  "General Inquiry",
+  "Legal Consultation",
+  "Case Discussion",
+  "Appointment Request",
+  "Other",
+];
+
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+    {
+      "@type": "ListItem",
+      position: 2,
+      name: "Contact",
+      item: `${SITE_URL}/contact`,
+    },
+  ],
+};
+
+const contactPageLd = {
+  "@context": "https://schema.org",
+  "@type": "ContactPage",
+  name: "Contact Aabiskar Law Chamber",
+  url: `${SITE_URL}/contact`,
+  mainEntity: {
+    "@type": "LegalService",
+    "@id": `${SITE_URL}/#organization`,
+    name: FIRM.name,
+    telephone: FIRM.phone,
+    email: FIRM.email,
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: FIRM.address.street,
+      addressLocality: FIRM.address.city,
+      addressRegion: FIRM.address.province,
+      addressCountry: "NP",
+    },
+  },
+};
 
 export default function Contact() {
-  const [siteConfig, setSiteConfig] = useState<SiteConfig | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [submitting, setSubmitting] = useState(false)
-  const [submitted, setSubmitted] = useState(false)
-  const [errors, setErrors] = useState<ContactFormErrors>({})
-  const [submitError, setSubmitError] = useState<string | null>(null)
+  const [siteConfig, setSiteConfig] = useState<SiteConfig | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [errors, setErrors] = useState<ContactFormErrors>({});
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const [formData, setFormData] = useState<ContactSubmission>({
-    name: '',
-    email: '',
-    phone: '',
-    subject: '',
-    message: '',
-  })
+    name: "",
+    email: "",
+    phone: "",
+    subject: "",
+    message: "",
+  });
+  // Honeypot field — hidden from humans, catches naive bots.
+  const [company, setCompany] = useState("");
 
   useEffect(() => {
-    const fetchData = async () => {
+    let cancelled = false;
+    const run = async () => {
       try {
-        const config = await getSiteConfig()
-        setSiteConfig(config)
-      } catch (error) {
-        console.error('Error fetching site config:', error)
+        const config = await getSiteConfig();
+        if (!cancelled) setSiteConfig(config);
+      } catch (err) {
+        console.error("Error fetching site config:", err);
       } finally {
-        setLoading(false)
+        if (!cancelled) setLoading(false);
       }
-    }
-
-    fetchData()
-  }, [])
+    };
+    run();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const validateForm = (): boolean => {
-    const newErrors: ContactFormErrors = {}
-
-    if (!formData.name.trim()) {
-      newErrors.name = 'Name is required'
-    }
-
+    const newErrors: ContactFormErrors = {};
+    if (!formData.name.trim()) newErrors.name = "Name is required";
     if (!formData.email.trim()) {
-      newErrors.email = 'Email is required'
+      newErrors.email = "Email is required";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email'
+      newErrors.email = "Please enter a valid email address";
     }
-
-    if (!formData.subject.trim()) {
-      newErrors.subject = 'Subject is required'
-    }
-
-    if (!formData.message.trim()) {
-      newErrors.message = 'Message is required'
-    }
-
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
+    if (!formData.subject.trim()) newErrors.subject = "Please select a subject";
+    if (!formData.message.trim()) newErrors.message = "Message is required";
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
+    if (!validateForm()) return;
 
-    if (!validateForm()) {
-      return
+    // Silent success for honeypot submissions (bot).
+    if (company.trim() !== "") {
+      setSubmitted(true);
+      return;
     }
 
-    setSubmitting(true)
-    setSubmitError(null)
-
+    setSubmitting(true);
+    setSubmitError(null);
     try {
-      const success = await submitContactForm(formData)
+      const success = await submitContactForm(formData);
       if (success) {
-        setSubmitted(true)
-        setFormData({
-          name: '',
-          email: '',
-          phone: '',
-          subject: '',
-          message: '',
-        })
+        setSubmitted(true);
+        setFormData({ name: "", email: "", phone: "", subject: "", message: "" });
       } else {
-        setSubmitError('Failed to submit form. Please try again.')
+        setSubmitError(
+          "Sorry, we couldn't send your message right now. Please try again, or call us directly."
+        );
       }
-    } catch (error) {
-      console.error('Error submitting form:', error)
-      setSubmitError('An error occurred. Please try again.')
+    } catch (err) {
+      console.error("Error submitting form:", err);
+      setSubmitError("Something went wrong. Please try again.");
     } finally {
-      setSubmitting(false)
+      setSubmitting(false);
     }
-  }
+  };
 
   const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
     if (errors[name as keyof ContactFormErrors]) {
-      setErrors((prev) => ({ ...prev, [name]: undefined }))
+      setErrors((prev) => ({ ...prev, [name]: undefined }));
     }
-  }
+  };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center" style={{ minHeight: '50vh' }}>
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2" style={{ borderColor: '#c5a059' }}></div>
-      </div>
-    )
-  }
+  const infoRows = [
+    {
+      icon: <LocationIcon size={20} />,
+      label: "Office",
+      lines: siteConfig
+        ? [
+            siteConfig.location.office,
+            siteConfig.location.street,
+            `${siteConfig.location.city}, ${siteConfig.location.district}`,
+            `${siteConfig.location.province}, ${siteConfig.location.country}`,
+          ]
+        : [
+            FIRM.address.street,
+            FIRM.address.city,
+            `${FIRM.address.district}, ${FIRM.address.province}`,
+            FIRM.address.country,
+          ],
+    },
+    {
+      icon: <PhoneIcon size={20} />,
+      label: "Phone",
+      lines: [siteConfig?.phone ?? FIRM.phoneDisplay],
+      href: `tel:${FIRM.phone}`,
+    },
+    {
+      icon: <EmailIcon size={20} />,
+      label: "Email",
+      lines: [siteConfig?.email ?? FIRM.email],
+      href: `mailto:${FIRM.email}`,
+    },
+    {
+      icon: <ClockIcon size={20} />,
+      label: "Office Hours",
+      lines: [
+        `Mon – Fri: ${siteConfig?.officeHours.weekdays ?? FIRM.officeHours.weekdays}`,
+        `Saturday: ${siteConfig?.officeHours.saturday ?? FIRM.officeHours.saturday}`,
+        siteConfig?.officeHours.note ?? FIRM.officeHours.note,
+      ],
+    },
+  ];
 
   return (
     <>
-      <Helmet>
-        <title>Contact Us | Aabiskar Law Chamber</title>
-        <meta name="description" content="Get in touch with Aabiskar Law Chamber. Schedule a consultation with our expert legal team in Pokhara, Nepal." />
-        <link rel="canonical" href={SITE_URL + '/contact'} />
-        <meta property="og:title" content="Contact Us | Aabiskar Law Chamber" />
-        <meta property="og:description" content="Get in touch with Aabiskar Law Chamber. Schedule a consultation with our expert legal team in Pokhara, Nepal." />
-        <meta property="og:url" content={SITE_URL + '/contact'} />
-        <meta property="og:image" content={SITE_URL + '/og-image.png'} />
-        <meta name="twitter:title" content="Contact Us | Aabiskar Law Chamber" />
-        <meta name="twitter:description" content="Get in touch with Aabiskar Law Chamber. Schedule a consultation with our expert legal team in Pokhara, Nepal." />
-        <meta name="twitter:image" content={SITE_URL + '/og-image.png'} />
-      </Helmet>
+      <SEO
+        title="Contact"
+        description="Get in touch with Aabiskar Law Chamber in Pokhara, Nepal. Request a consultation with our legal team."
+        path="/contact"
+        jsonLd={[contactPageLd, breadcrumbLd]}
+      />
 
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
-        "@context": "https://schema.org",
-        "@type": "ContactPage",
-        "name": "Contact Aabiskar Law Chamber",
-        "url": SITE_URL + "/contact",
-        "mainEntity": {
-          "@type": "LegalService",
-          "@id": SITE_URL + "/#organization",
-          "name": "Aabiskar Law Chamber",
-          "telephone": "+9779856032810",
-          "email": "pandithari912@gmail.com",
-          "address": {
-            "@type": "PostalAddress",
-            "streetAddress": "Rastra Bank Chowk",
-            "addressLocality": "Pokhara",
-            "addressRegion": "Gandaki Province",
-            "addressCountry": "NP"
-          }
-        }
-      }) }} />
+      <PageHeader
+        eyebrow="Contact"
+        title="Start the conversation"
+        subtitle="Ready to discuss your legal needs? Reach out and we'll respond as soon as we can."
+      />
 
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
-        "@context": "https://schema.org",
-        "@type": "BreadcrumbList",
-        "itemListElement": [
-          { "@type": "ListItem", "position": 1, "name": "Home", "item": SITE_URL },
-          { "@type": "ListItem", "position": 2, "name": "Contact Us", "item": SITE_URL + "/contact" }
-        ]
-      }) }} />
-
-      {/* Page Header */}
-      <section className="page-header">
-        <div className="container">
-          <div className="section-label" style={{ color: '#c5a059' }}>Contact Us</div>
-          <h1 className="page-title">Get In Touch</h1>
-          <p className="page-subtitle">
-            Ready to discuss your legal needs? Contact us today for a
-            consultation.
-          </p>
-        </div>
-      </section>
-
-      {/* Contact Section */}
-      <section>
-        <div className="container">
-          <div className="contact-grid">
-            {/* Contact Info */}
-            <div className="contact-info">
-              <h2>Contact Information</h2>
-
-              <div className="contact-item">
-                <div className="contact-icon"><LocationIcon size={22} /></div>
-                <div>
-                  <div className="contact-label">Office Address</div>
-                  <div className="contact-value">
-                    {siteConfig?.location.office}
-                    <br />
-                    {siteConfig?.location.street}
-                    <br />
-                    {siteConfig?.location.city}, {siteConfig?.location.district}
-                    <br />
-                    {siteConfig?.location.province}, {siteConfig?.location.country}
+      <section className="container-page py-16 sm:py-20">
+        <div className="grid gap-12 lg:grid-cols-5 lg:gap-16">
+          {/* Info column */}
+          <Reveal className="lg:col-span-2">
+            <p className="eyebrow">Get in touch</p>
+            <h2 className="mt-5 text-2xl sm:text-3xl">
+              Office & contact details
+            </h2>
+            <dl className="mt-8 divide-y border-y">
+              {infoRows.map((row) => (
+                <div key={row.label} className="flex gap-4 py-5">
+                  <span
+                    className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-sm"
+                    style={{
+                      background:
+                        "color-mix(in srgb, var(--c-gold) 14%, transparent)",
+                      color: "var(--c-accent)",
+                    }}
+                    aria-hidden="true"
+                  >
+                    {row.icon}
+                  </span>
+                  <div>
+                    <dt
+                      className="text-[0.72rem] font-semibold uppercase tracking-[0.16em]"
+                      style={{ color: "var(--c-ink-faint)" }}
+                    >
+                      {row.label}
+                    </dt>
+                    <dd className="mt-1 text-[0.98rem] leading-relaxed">
+                      {row.href ? (
+                        <a
+                          href={row.href}
+                          className="transition-colors"
+                          style={{ color: "var(--c-ink)" }}
+                        >
+                          {row.lines[0]}
+                        </a>
+                      ) : (
+                        row.lines.map((line, i) => (
+                          <span
+                            key={i}
+                            className="block"
+                            style={{
+                              color: "var(--c-ink)",
+                              fontStyle:
+                                i === row.lines.length - 1 && row.lines.length > 1
+                                  ? "italic"
+                                  : undefined,
+                              fontSize:
+                                i === row.lines.length - 1 && row.lines.length > 1
+                                  ? "0.88rem"
+                                  : undefined,
+                            }}
+                          >
+                            {line}
+                          </span>
+                        ))
+                      )}
+                    </dd>
                   </div>
                 </div>
-              </div>
+              ))}
+            </dl>
+          </Reveal>
 
-              <div className="contact-item">
-                <div className="contact-icon"><PhoneIcon size={22} /></div>
-                <div>
-                  <div className="contact-label">Phone</div>
-                  <div className="contact-value">{siteConfig?.phone}</div>
-                </div>
-              </div>
-
-              <div className="contact-item">
-                <div className="contact-icon"><EmailIcon size={22} /></div>
-                <div>
-                  <div className="contact-label">Email</div>
-                  <div className="contact-value">{siteConfig?.email}</div>
-                </div>
-              </div>
-
-              <div className="contact-item">
-                <div className="contact-icon"><ClockIcon size={22} /></div>
-                <div>
-                  <div className="contact-label">Office Hours</div>
-                  <div className="contact-value">
-                    Monday - Friday: {siteConfig?.officeHours.weekdays}
-                    <br />
-                    Saturday: {siteConfig?.officeHours.saturday}
-                    <br />
-                    <em style={{ fontSize: '0.85rem', opacity: 0.7 }}>
-                      {siteConfig?.officeHours.note}
-                    </em>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Contact Form */}
-            <div className="contact-form">
+          {/* Form column */}
+          <Reveal delay={0.1} className="lg:col-span-3">
+            <div
+              className="rounded-sm border p-7 sm:p-9"
+              style={{
+                background: "var(--c-surface)",
+                borderColor: "var(--c-line)",
+              }}
+            >
               {submitted ? (
-                <div style={{ textAlign: 'center', padding: '3rem 0' }}>
-                  <div style={{ marginBottom: '1rem', color: '#059669' }}><CheckIcon size={64} /></div>
-                  <h3 style={{ fontSize: '1.5rem', marginBottom: '0.5rem' }}>
-                    Thank You!
-                  </h3>
-                  <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>
-                    Your message has been sent successfully. We'll get back to
-                    you soon.
+                <div className="py-10 text-center">
+                  <span
+                    className="mx-auto flex h-16 w-16 items-center justify-center rounded-full"
+                    style={{
+                      background: "color-mix(in srgb, var(--c-success) 15%, transparent)",
+                      color: "var(--c-success)",
+                    }}
+                    aria-hidden="true"
+                  >
+                    <CheckIcon size={30} />
+                  </span>
+                  <h2 className="mt-6 font-display text-2xl">Thank you</h2>
+                  <p
+                    className="mx-auto mt-3 max-w-sm"
+                    style={{ color: "var(--c-ink-soft)" }}
+                  >
+                    Your message has been sent. We'll get back to you as soon as
+                    possible.
                   </p>
                   <button
                     onClick={() => setSubmitted(false)}
-                    className="btn-primary"
+                    className="btn btn-outline mt-8"
                   >
-                    Send Another Message
+                    Send another message
                   </button>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit}>
-                  <h2>Send Us a Message</h2>
+                <form onSubmit={handleSubmit} noValidate>
+                  <h2 className="font-display text-2xl">Send us a message</h2>
+                  <p
+                    className="mt-2 text-[0.92rem]"
+                    style={{ color: "var(--c-ink-soft)" }}
+                  >
+                    Fields marked <span aria-hidden="true">*</span>
+                    <span className="sr-only">with an asterisk</span> are
+                    required.
+                  </p>
 
-                  <div className="form-group">
-                    <label htmlFor="name" className="form-label">
-                      Full Name *
-                    </label>
-                    <input
-                      type="text"
-                      id="name"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleChange}
-                      className={`form-input ${errors.name ? 'error' : ''}`}
-                      placeholder="Your name"
-                    />
-                    {errors.name && (
-                      <span className="error-message">{errors.name}</span>
-                    )}
+                  <div className="mt-7 grid gap-5 sm:grid-cols-2">
+                    {/* Name */}
+                    <div>
+                      <label htmlFor="name" className="field-label">
+                        Full Name <span aria-hidden="true">*</span>
+                      </label>
+                      <input
+                        id="name"
+                        name="name"
+                        type="text"
+                        autoComplete="name"
+                        value={formData.name}
+                        onChange={handleChange}
+                        aria-invalid={errors.name ? "true" : "false"}
+                        aria-describedby={errors.name ? "name-error" : undefined}
+                        className="field-input"
+                        placeholder="Your full name"
+                      />
+                      {errors.name && (
+                        <span id="name-error" className="field-error" role="alert">
+                          {errors.name}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Email */}
+                    <div>
+                      <label htmlFor="email" className="field-label">
+                        Email <span aria-hidden="true">*</span>
+                      </label>
+                      <input
+                        id="email"
+                        name="email"
+                        type="email"
+                        autoComplete="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        aria-invalid={errors.email ? "true" : "false"}
+                        aria-describedby={errors.email ? "email-error" : undefined}
+                        className="field-input"
+                        placeholder="you@example.com"
+                      />
+                      {errors.email && (
+                        <span id="email-error" className="field-error" role="alert">
+                          {errors.email}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Phone */}
+                    <div>
+                      <label htmlFor="phone" className="field-label">
+                        Phone (optional)
+                      </label>
+                      <input
+                        id="phone"
+                        name="phone"
+                        type="tel"
+                        autoComplete="tel"
+                        value={formData.phone}
+                        onChange={handleChange}
+                        className="field-input"
+                        placeholder="+977 98XXXXXXXX"
+                      />
+                    </div>
+
+                    {/* Subject */}
+                    <div>
+                      <label htmlFor="subject" className="field-label">
+                        Subject <span aria-hidden="true">*</span>
+                      </label>
+                      <select
+                        id="subject"
+                        name="subject"
+                        value={formData.subject}
+                        onChange={handleChange}
+                        aria-invalid={errors.subject ? "true" : "false"}
+                        aria-describedby={errors.subject ? "subject-error" : undefined}
+                        className="field-input"
+                      >
+                        <option value="">Select a subject</option>
+                        {SUBJECT_OPTIONS.map((opt) => (
+                          <option key={opt} value={opt}>
+                            {opt}
+                          </option>
+                        ))}
+                      </select>
+                      {errors.subject && (
+                        <span id="subject-error" className="field-error" role="alert">
+                          {errors.subject}
+                        </span>
+                      )}
+                    </div>
                   </div>
 
-                  <div className="form-group">
-                    <label htmlFor="email" className="form-label">
-                      Email Address *
-                    </label>
-                    <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      className={`form-input ${errors.email ? 'error' : ''}`}
-                      placeholder="your@email.com"
-                    />
-                    {errors.email && (
-                      <span className="error-message">{errors.email}</span>
-                    )}
-                  </div>
-
-                  <div className="form-group">
-                    <label htmlFor="phone" className="form-label">
-                      Phone Number
-                    </label>
-                    <input
-                      type="tel"
-                      id="phone"
-                      name="phone"
-                      value={formData.phone}
-                      onChange={handleChange}
-                      className="form-input"
-                      placeholder="+977 98XXXXXXXX"
-                    />
-                  </div>
-
-                  <div className="form-group">
-                    <label htmlFor="subject" className="form-label">
-                      Subject *
-                    </label>
-                    <select
-                      id="subject"
-                      name="subject"
-                      value={formData.subject}
-                      onChange={handleChange}
-                      className={`form-select ${errors.subject ? 'error' : ''}`}
-                    >
-                      <option value="">Select a subject</option>
-                      <option value="General Inquiry">General Inquiry</option>
-                      <option value="Legal Consultation">
-                        Legal Consultation
-                      </option>
-                      <option value="Case Discussion">Case Discussion</option>
-                      <option value="Appointment Request">
-                        Appointment Request
-                      </option>
-                      <option value="Other">Other</option>
-                    </select>
-                    {errors.subject && (
-                      <span className="error-message">{errors.subject}</span>
-                    )}
-                  </div>
-
-                  <div className="form-group">
-                    <label htmlFor="message" className="form-label">
-                      Message *
+                  {/* Message */}
+                  <div className="mt-5">
+                    <label htmlFor="message" className="field-label">
+                      Message <span aria-hidden="true">*</span>
                     </label>
                     <textarea
                       id="message"
                       name="message"
+                      rows={6}
                       value={formData.message}
                       onChange={handleChange}
-                      rows={5}
-                      className={`form-textarea ${errors.message ? 'error' : ''}`}
-                      placeholder="How can we help you?"
+                      aria-invalid={errors.message ? "true" : "false"}
+                      aria-describedby={errors.message ? "message-error" : undefined}
+                      className="field-input resize-y"
+                      placeholder="Briefly describe how we can help."
                     />
                     {errors.message && (
-                      <span className="error-message">{errors.message}</span>
+                      <span id="message-error" className="field-error" role="alert">
+                        {errors.message}
+                      </span>
                     )}
+                  </div>
+
+                  {/* Honeypot (hidden from humans) */}
+                  <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
+                    <label htmlFor="company">Company</label>
+                    <input
+                      id="company"
+                      name="company"
+                      type="text"
+                      tabIndex={-1}
+                      autoComplete="off"
+                      value={company}
+                      onChange={(e) => setCompany(e.target.value)}
+                    />
                   </div>
 
                   {submitError && (
                     <div
+                      role="alert"
+                      className="mt-5 rounded-sm border px-4 py-3 text-[0.9rem]"
                       style={{
-                        padding: '0.75rem 1rem',
-                        background: '#FEE2E2',
-                        color: '#DC2626',
-                        borderRadius: '0.5rem',
-                        fontSize: '0.9rem',
-                        marginBottom: '1rem',
+                        borderColor: "color-mix(in srgb, var(--c-danger) 40%, transparent)",
+                        background: "color-mix(in srgb, var(--c-danger) 8%, transparent)",
+                        color: "var(--c-danger)",
                       }}
                     >
                       {submitError}
@@ -365,30 +465,48 @@ export default function Contact() {
                   <button
                     type="submit"
                     disabled={submitting}
-                    className="btn-submit"
+                    className="btn btn-primary mt-7 w-full"
                   >
-                    {submitting ? 'Sending...' : 'Send Message'}
+                    {submitting ? "Sending…" : "Send Message"}
                   </button>
+
+                  <p
+                    className="mt-5 text-[0.82rem] leading-relaxed"
+                    style={{ color: "var(--c-ink-faint)" }}
+                  >
+                    Sending a message does not create an attorney–client
+                    relationship. Please do not include confidential information
+                    until we have agreed to act for you.
+                  </p>
                 </form>
               )}
             </div>
-          </div>
+          </Reveal>
         </div>
+
+        {/* Loading state for the info column only (form is always usable) */}
+        {loading && (
+          <p className="sr-only" aria-live="polite">
+            Loading office details
+          </p>
+        )}
       </section>
 
-      {/* Map Section */}
-      <section className="map-section">
+      {/* Map */}
+      <section aria-label="Office location map" className="map-section">
         <iframe
-          title="Aabiskar Law Chamber Location"
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3532.847452106653!2d83.9855!3d28.2096!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39959415e5a5a5a5%3A0x1234567890abcdef!2sPokhara%2C%20Nepal!5e0!3m2!1sen!2snp!4v1234567890"
+          title="Map showing the Aabiskar Law Chamber office in Pokhara"
+          src={`https://www.google.com/maps?q=${encodeURIComponent(
+            FIRM.mapQuery
+          )}&output=embed`}
           width="100%"
           height="100%"
           style={{ border: 0 }}
-          allowFullScreen
           loading="lazy"
           referrerPolicy="no-referrer-when-downgrade"
-        ></iframe>
+          allowFullScreen
+        />
       </section>
     </>
-  )
+  );
 }

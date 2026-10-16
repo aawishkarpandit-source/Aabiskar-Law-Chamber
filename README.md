@@ -1,31 +1,41 @@
 # Aabiskar Law Chamber Website
 
-A modern, full-stack website for Aabiskar Law Chamber, a premier law firm in Pokhara, Nepal. Built with React, TypeScript, Supabase, and Tailwind CSS.
+A modern, full-stack website for Aabiskar Law Chamber, a law firm in Pokhara, Nepal. Built with React, TypeScript, Supabase, and Tailwind CSS.
 
 ## Live Site
 
 **https://aabiskar-law-chamber.vercel.app**
 
+## Overview
+
+A premium, editorial marketing site for a real legal practice. The visual direction — spacious
+layouts, restrained navy/gold palette, refined serif display type (Newsreader) with a clean sans
+body (Inter), and subtle motion — is inspired by high-end legal templates while remaining an
+original, firm-specific design.
+
+All business logic is preserved: every page reads from Supabase, the contact form writes to the
+database, and all existing routes, anchors, and SEO URLs continue to work.
+
 ## Features
 
-- **5 Pages**: Home, About, Practice Areas, Team, Contact
-- **Database Backend**: Supabase for dynamic content management
-- **Dark/Light Mode**: Toggle with preference saved in localStorage
-- **Responsive Design**: Works on all devices (mobile, tablet, desktop)
-- **SEO Optimized**: Meta tags, Open Graph, JSON-LD structured data
-- **Performance**: Lazy loading, code splitting, optimized builds
-- **Contact Form**: Supabase integration with validation
-- **Cookie Consent**: GDPR-compliant cookie banner
-- **Scroll Animations**: Framer Motion-based reveal animations
+- **5 Pages**: Home, About, Practice Areas, Team, Contact (+ 404)
+- **Database-Driven Content**: hero, intro, features, stats, practice areas, team, testimonials, and site config load from Supabase at runtime
+- **Dark / Light Mode**: toggle with preference persisted in `localStorage`
+- **Design System**: tokenized colors, typography, spacing, buttons, and form states in `src/index.css`
+- **Subtle Motion**: `framer-motion` scroll reveals that respect `prefers-reduced-motion`
+- **Contact Form**: validated, spam-protected (honeypot), writes to `contact_submissions`
+- **SEO**: per-page titles, descriptions, canonical URLs, Open Graph, Twitter cards, and JSON-LD structured data
+- **Accessible**: keyboard navigation, visible focus states, labelled inputs, `aria-*` attributes, reduced-motion support
+- **Responsive**: mobile (320px+), tablet, laptop, and large desktop
 
 ## Tech Stack
 
 | Category | Technology |
 |----------|------------|
-| **Frontend** | React 19 + TypeScript 6 |
-| **Build** | Vite 8 + Tailwind CSS v4 |
+| **Frontend** | React 19 + TypeScript |
+| **Build** | Vite + Tailwind CSS v4 |
 | **Routing** | React Router DOM v7 |
-| **Backend** | Supabase (Postgres + Storage) |
+| **Backend** | Supabase (Postgres) |
 | **Animations** | Framer Motion |
 | **SEO** | react-helmet-async |
 | **Hosting** | Vercel (auto-deploy from `main`) |
@@ -34,22 +44,24 @@ A modern, full-stack website for Aabiskar Law Chamber, a premier law firm in Pok
 
 ```
 /
-├── public/                → Static assets (brand, icons, images)
+├── public/
+│   ├── static/assets/        → brand, portraits, imagery
+│   ├── robots.txt
+│   ├── sitemap.xml
+│   └── og-image.png
 ├── src/
-│   ├── App.tsx            → All routes, lazy-loaded
-│   ├── main.tsx           → Entry point
-│   ├── index.css          → Tailwind v4 + theme tokens
-│   ├── data/              → Hardcoded static site text
-│   ├── lib/               → Supabase queries, utils
-│   ├── hooks/             → Theme, data fetching
-│   ├── components/        → Layout, Navbar, Footer, etc.
-│   ├── pages/             → 6 page components (lazy-loaded)
-│   └── types/             → TypeScript interfaces
-├── supabase-migration.sql → Full schema + seed data
-├── .env.example
-├── vercel.json
-├── README.md
-└── LICENSE
+│   ├── index.html            → Vite entry
+│   ├── main.tsx              → providers (Helmet, Router)
+│   ├── App.tsx               → routes (lazy-loaded)
+│   ├── index.css             → Tailwind v4 + design tokens
+│   ├── lib/                  → supabase client, queries, site constants, icon resolver
+│   ├── hooks/                → useTheme, useData
+│   ├── types/                → shared TypeScript interfaces
+│   ├── components/           → Navbar, Footer, SEO, Reveal, PageHeader, Feedback, Icons
+│   └── pages/                → Home, About, Services, Team, Contact, NotFound
+├── supabase-migration.sql    → full schema + seed data (source of truth)
+├── vercel.json               → SPA rewrites + security headers
+└── README.md
 ```
 
 ## Setup
@@ -62,12 +74,12 @@ npm install
 cp .env.example .env
 # Edit .env with your Supabase URL and anon key
 
-# 3. Run DB migration in Supabase SQL Editor (supabase-migration.sql)
+# 3. Run the DB migration in the Supabase SQL Editor (supabase-migration.sql)
 
 # 4. Start dev server
 npm run dev
 
-# 5. Build for production
+# 5. Production build (typecheck + bundle)
 npm run build
 ```
 
@@ -75,49 +87,39 @@ npm run build
 
 | Route | Page | Data Source |
 |-------|------|-------------|
-| `/` | Home | Supabase (stats, hero, features) + static text |
-| `/about` | About | Supabase (about, stats) |
-| `/services` | Practice Areas | Supabase (practice_areas) |
-| `/team` | Team | Supabase (team_members) |
-| `/contact` | Contact | Supabase (site_config, contact_submissions) |
+| `/` | Home | Supabase (hero, intro, why-choose-us, CTA, stats, practice areas, team, testimonials) |
+| `/about` | About | Supabase (about, stats, team) |
+| `/services` | Practice Areas | Supabase (`practice_areas`, anchored per id) |
+| `/team` | Team | Supabase (`team_members`) |
+| `/contact` | Contact | Supabase (`site_config`, `contact_submissions`) |
 
 ## Data Flow
 
-All dynamic content is fetched from Supabase at runtime. Static site text is hardcoded in components or fetched from the `site_config` table.
-
-### Dynamic queries in `src/lib/queries.ts`:
+Dynamic content is fetched from Supabase at runtime via `src/lib/queries.ts`:
 
 - `getSiteConfig()` — global site configuration
 - `getNavItems()` — navigation links
-- `getHeroContent()` — homepage hero section
-- `getIntroContent()` — homepage intro section
-- `getFeaturesContent()` — homepage features
-- `getAboutContent()` — about section content
-- `getWhyChooseUsContent()` — why choose us section
-- `getCTAContent()` — call to action section
+- `getHeroContent()` / `getIntroContent()` / `getFeaturesContent()`
+- `getAboutContent()` / `getWhyChooseUsContent()` / `getCTAContent()`
 - `getStats()` — homepage statistics
-- `getPracticeAreas()` — all practice areas
-- `getTeamMembers()` — all team members
-- `getTestimonials()` — client testimonials
-- `submitContactForm()` — contact form submission
+- `getPracticeAreas()` / `getPracticeAreaById()`
+- `getTeamMembers()` / `getSeniorMembers()` / `getAssociates()`
+- `getTestimonials()`
+- `submitContactForm()` — contact form insert
 
-## Adding Content
+Static firm facts (address, phone, email, office hours, social links) used for SEO, structured
+data, and the footer are centralized in `src/lib/site.ts` and mirror the seeded `site_config`
+record — they are not duplicated in components.
 
-### New Practice Area
+## Editing Content
 
-1. Insert into Supabase `practice_areas` table
+All editable content lives in Supabase; no source-code edits are needed:
 
-### New Team Member
-
-1. Insert into Supabase `team_members` table
-
-### New Testimonial
-
-1. Insert into Supabase `testimonials` table
-
-### Update Site Config
-
-1. Update the `site_config` table in Supabase
+- **Practice areas** → `practice_areas` table
+- **Team members** → `team_members` table
+- **Testimonials** → `testimonials` table
+- **Stats** → `stats` table
+- **Site config / hero / intro / CTA** → `site_config` table
 
 ## Environment Variables
 
@@ -128,11 +130,8 @@ VITE_SUPABASE_URL=https://your-project.supabase.co
 VITE_SUPABASE_ANON_KEY=your-anon-key
 ```
 
-Optional:
-
-```
-VITE_GA4_ID=G-XXXXXXXXXX
-```
+> `VITE_*` values are exposed to client-side code. Only publish values meant to be public
+> (the Supabase URL and anon key). All privileged operations must stay server-side.
 
 ## Development
 
@@ -143,12 +142,16 @@ npm run preview # Preview production build locally
 npm run lint    # Run ESLint
 ```
 
-## Color Scheme
+## Design Tokens
 
-- **Primary (Navy)**: `#0a192f`
-- **Accent (Gold)**: `#c5a059`
-- **Light Gray**: `#f4f4f4`
-- **White**: `#ffffff`
+Colors, typography, and component states are defined as CSS custom properties in
+`src/index.css`, exposed to Tailwind through `@theme inline`:
+
+- **Canvas / surface**: warm paper (light) → deep navy (dark)
+- **Ink**: `#12203a` (light) → `#e9e4d9` (dark)
+- **Accent (gold)**: `#a67c2e` (light) → `#d8b36a` (dark)
+- **Brand navy**: `#0a192f`
+- **Display type**: Newsreader · **Body type**: Inter
 
 ## License
 

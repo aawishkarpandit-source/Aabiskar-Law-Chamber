@@ -1,62 +1,42 @@
-import { Link } from 'react-router-dom'
-import { Helmet } from 'react-helmet-async'
+import { Link } from "react-router-dom";
+import SEO from "../components/SEO";
+import { ArrowRightIcon } from "../components/Icons";
 
 export default function NotFound() {
   return (
     <>
-      <Helmet>
-        <title>404 - Page Not Found | Aabiskar Law Chamber</title>
-        <meta name="robots" content="noindex, nofollow" />
-        <link rel="canonical" href="https://aabiskar-law-chamber.vercel.app/404" />
-      </Helmet>
+      <SEO
+        title="Page Not Found"
+        description="The page you're looking for doesn't exist or has been moved."
+        path="/404"
+        index={false}
+      />
 
-      <section
-        style={{
-          minHeight: '70vh',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          background: 'var(--bg-primary)',
-        }}
-      >
-        <div style={{ textAlign: 'center', padding: '0 1.5rem' }}>
-          <h1
-            style={{
-              fontSize: '8rem',
-              fontWeight: '700',
-              color: '#c5a059',
-              marginBottom: '1rem',
-              lineHeight: '1',
-            }}
-          >
-            404
-          </h1>
-          <h2
-            style={{
-              fontSize: '2rem',
-              fontWeight: '700',
-              marginBottom: '1rem',
-              color: 'var(--text-primary)',
-            }}
-          >
-            Page Not Found
-          </h2>
-          <p
-            style={{
-              color: 'var(--text-secondary)',
-              marginBottom: '2rem',
-              maxWidth: '400px',
-              margin: '0 auto 2rem',
-            }}
-          >
-            The page you're looking for doesn't exist or has been moved. Let us
-            help you find your way.
-          </p>
-          <Link to="/" className="btn-primary">
-            Go Back Home
+      <section className="container-page flex min-h-[70vh] flex-col items-center justify-center py-24 text-center">
+        <p
+          className="font-display text-[5rem] leading-none sm:text-[7rem]"
+          style={{ color: "var(--c-accent)" }}
+        >
+          404
+        </p>
+        <h1 className="mt-4 text-3xl sm:text-4xl">Page not found</h1>
+        <p
+          className="mt-4 max-w-md text-[1.02rem] leading-relaxed"
+          style={{ color: "var(--c-ink-soft)" }}
+        >
+          The page you're looking for doesn't exist or has been moved. Let us
+          help you find your way.
+        </p>
+        <div className="mt-8 flex flex-wrap justify-center gap-4">
+          <Link to="/" className="btn btn-primary">
+            Back to home
+            <ArrowRightIcon size={16} />
+          </Link>
+          <Link to="/contact" className="btn btn-outline">
+            Contact us
           </Link>
         </div>
       </section>
     </>
-  )
+  );
 }

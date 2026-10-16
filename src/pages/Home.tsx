@@ -1,254 +1,588 @@
-import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
-import { Helmet } from 'react-helmet-async'
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import SEO from "../components/SEO";
+import Reveal from "../components/Reveal";
+import { Skeleton } from "../components/Feedback";
+import { renderIcon } from "../lib/icons";
+import { SITE_URL, FIRM, FIRM_ADDRESS_LINE } from "../lib/site";
+import { ArrowRightIcon, ArrowUpRightIcon, QuoteIcon } from "../components/Icons";
 import {
   getHeroContent,
   getIntroContent,
-  getFeaturesContent,
   getWhyChooseUsContent,
   getCTAContent,
   getStats,
-} from '../lib/queries'
+  getPracticeAreas,
+  getTeamMembers,
+  getTestimonials,
+} from "../lib/queries";
 import type {
   HeroContent,
   IntroContent,
-  FeaturesContent,
   WhyChooseUsContent,
   CTAContent,
   Stat,
-} from '../types'
-import { ShieldIcon, HandshakeIcon, BalanceIcon, DocumentIcon, ChatIcon } from '../components/Icons'
+  PracticeArea,
+  TeamMember,
+  Testimonial,
+} from "../types";
 
-const SITE_URL = 'https://aabiskar-law-chamber.vercel.app'
+const organizationLd = {
+  "@context": "https://schema.org",
+  "@type": "LegalService",
+  "@id": `${SITE_URL}/#organization`,
+  name: FIRM.name,
+  alternateName: "Aabiskar Law Chamber Pokhara",
+  url: SITE_URL,
+  logo: `${SITE_URL}/static/assets/brand/logo.svg`,
+  description: FIRM.description,
+  telephone: FIRM.phone,
+  email: FIRM.email,
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: FIRM.address.street,
+    addressLocality: FIRM.address.city,
+    addressRegion: FIRM.address.province,
+    addressCountry: "NP",
+  },
+  geo: {
+    "@type": "GeoCoordinates",
+    latitude: FIRM.geo.latitude,
+    longitude: FIRM.geo.longitude,
+  },
+  areaServed: { "@type": "Country", name: "Nepal" },
+  sameAs: [FIRM.facebook, FIRM.whatsapp],
+};
 
 export default function Home() {
-  const [hero, setHero] = useState<HeroContent | null>(null)
-  const [intro, setIntro] = useState<IntroContent | null>(null)
-  const [features, setFeatures] = useState<FeaturesContent | null>(null)
-  const [whyChooseUs, setWhyChooseUs] = useState<WhyChooseUsContent | null>(
-    null
-  )
-  const [cta, setCta] = useState<CTAContent | null>(null)
-  const [stats, setStats] = useState<Stat[]>([])
-  const [loading, setLoading] = useState(true)
+  const [hero, setHero] = useState<HeroContent | null>(null);
+  const [intro, setIntro] = useState<IntroContent | null>(null);
+  const [why, setWhy] = useState<WhyChooseUsContent | null>(null);
+  const [cta, setCta] = useState<CTAContent | null>(null);
+  const [stats, setStats] = useState<Stat[]>([]);
+  const [areas, setAreas] = useState<PracticeArea[]>([]);
+  const [team, setTeam] = useState<TeamMember[]>([]);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchData = async () => {
+    let cancelled = false;
+    const run = async () => {
       try {
-        const [heroData, introData, featuresData, whyData, ctaData, statsData] =
-          await Promise.all([
-            getHeroContent(),
-            getIntroContent(),
-            getFeaturesContent(),
-            getWhyChooseUsContent(),
-            getCTAContent(),
-            getStats(),
-          ])
-
-        setHero(heroData)
-        setIntro(introData)
-        setFeatures(featuresData)
-        setWhyChooseUs(whyData)
-        setCta(ctaData)
-        setStats(statsData)
-      } catch (error) {
-        console.error('Error fetching data:', error)
+        const [
+          heroData,
+          introData,
+          whyData,
+          ctaData,
+          statsData,
+          areasData,
+          teamData,
+          testiData,
+        ] = await Promise.all([
+          getHeroContent(),
+          getIntroContent(),
+          getWhyChooseUsContent(),
+          getCTAContent(),
+          getStats(),
+          getPracticeAreas(),
+          getTeamMembers(),
+          getTestimonials(),
+        ]);
+        if (cancelled) return;
+        setHero(heroData);
+        setIntro(introData);
+        setWhy(whyData);
+        setCta(ctaData);
+        setStats(statsData);
+        setAreas(areasData);
+        setTeam(teamData.filter((m) => m.member_type === "senior"));
+        setTestimonials(testiData);
+      } catch (err) {
+        console.error("Error fetching home data:", err);
       } finally {
-        setLoading(false)
+        if (!cancelled) setLoading(false);
       }
-    }
+    };
+    run();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
-    fetchData()
-  }, [])
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center" style={{ minHeight: '50vh' }}>
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2" style={{ borderColor: '#c5a059' }}></div>
-      </div>
-    )
-  }
+  const selectedAreas = areas.slice(0, 4);
 
   return (
-    <div>
-      <Helmet>
-        <title>Aabiskar Law Chamber | Best Law Firm in Pokhara, Nepal</title>
-        <meta name="description" content="Aabiskar Law Chamber is the premier law firm in Pokhara, Nepal. Led by Adv. Hari Prasad Pandit, we provide expert legal services in criminal, property, and corporate law." />
-        <link rel="canonical" href={SITE_URL + '/'} />
-        <meta property="og:title" content="Aabiskar Law Chamber | Best Law Firm in Pokhara" />
-        <meta property="og:description" content="Premier law firm in Pokhara, Nepal. Expert legal services in criminal, property, and corporate law. Trusted by 1000+ clients." />
-        <meta property="og:url" content={SITE_URL + '/'} />
-        <meta property="og:image" content={SITE_URL + '/og-image.png'} />
-        <meta name="twitter:title" content="Aabiskar Law Chamber | Best Law Firm in Pokhara" />
-        <meta name="twitter:description" content="Premier law firm in Pokhara, Nepal. Expert legal services in criminal, property, and corporate law." />
-        <meta name="twitter:image" content={SITE_URL + '/og-image.png'} />
-      </Helmet>
+    <>
+      <SEO
+        title="Best Law Firm in Pokhara, Nepal"
+        description={FIRM.description}
+        path="/"
+        jsonLd={organizationLd}
+      />
 
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
-        "@context": "https://schema.org",
-        "@type": "LegalService",
-        "@id": SITE_URL + "/#organization",
-        "name": "Aabiskar Law Chamber",
-        "url": SITE_URL,
-        "logo": SITE_URL + "/static/assets/brand/logo.svg",
-        "description": "Premier law firm in Pokhara, Nepal. Expert legal services in criminal, property, and corporate law.",
-        "telephone": "+9779856032810",
-        "email": "pandithari912@gmail.com",
-        "address": {
-          "@type": "PostalAddress",
-          "streetAddress": "Rastra Bank Chowk",
-          "addressLocality": "Pokhara",
-          "addressRegion": "Gandaki Province",
-          "addressCountry": "NP"
-        },
-        "sameAs": [
-          "https://facebook.com/advhari.pandit",
-          "https://wa.me/9779856032810"
-        ],
-        "contactPoint": {
-          "@type": "ContactPoint",
-          "telephone": "+9779856032810",
-          "contactType": "customer service",
-          "email": "pandithari912@gmail.com"
-        }
-      }) }} />
-
-      {/* Hero Section */}
-      {hero && (
-        <section className="hero">
-          <div className="hero-shapes">
-            <div className="hero-shape hero-shape-1"></div>
-            <div className="hero-shape hero-shape-2"></div>
-            <div className="hero-shape hero-shape-3"></div>
-          </div>
-          <div className="hero-content">
-            <div className="hero-badge">
-              <div className="hero-badge-dot"></div>
-              <span className="hero-badge-text">{hero.badge}</span>
-            </div>
-            <h1 className="hero-title">
-              <span className="line">{hero.titleLine1}</span>
-              <span className="line accent">{hero.titleLine2}</span>
-            </h1>
-            <p className="hero-subtitle">{hero.subtitle}</p>
-            <div className="hero-buttons">
-              <Link to="/contact" className="btn-primary">
-                {hero.ctaPrimary}
-              </Link>
-              <Link to="/services" className="btn-secondary">
-                <span>{hero.ctaSecondary}</span>
-              </Link>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* Stats Section */}
-      {stats.length > 0 && (
-        <section className="stats-section">
-          <div className="container">
-            <div className="stats-grid">
-              {stats.map((stat) => (
-                <div key={stat.id} className="stat-item">
-                  <div className="stat-number">{stat.value}</div>
-                  <div className="stat-label">{stat.label}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* Intro Section */}
-      {intro && (
-        <section>
-          <div className="container">
-            <div className="about-grid">
-              <div className="about-text">
-                <div className="section-label">{intro.label}</div>
-                <h2 className="section-title">{intro.title}</h2>
-                {intro.paragraphs.map((paragraph, index) => (
-                  <p key={index} dangerouslySetInnerHTML={{ __html: paragraph }} />
-                ))}
-                <Link to="/about" className="btn-primary" style={{ marginTop: '1rem' }}>
-                  Learn More About Us
+      {/* ---------------- Hero ---------------- */}
+      <section className="relative overflow-hidden">
+        <div className="container-page relative z-10 grid items-center gap-14 py-20 sm:py-24 lg:grid-cols-12 lg:gap-10 lg:py-28">
+          <div className="lg:col-span-7">
+            <Reveal>
+              <p className="eyebrow">
+                {hero?.badge ?? "Trusted Legal Counsel"}
+              </p>
+            </Reveal>
+            <Reveal delay={0.08}>
+              <h1 className="mt-6 text-[2.75rem] leading-[1.05] sm:text-6xl lg:text-[4.5rem]">
+                {hero?.titleLine1 ?? "Legal Counsel"}
+                <br />
+                <span style={{ color: "var(--c-accent)" }}>
+                  {hero?.titleLine2 ?? "You Can Rely On"}
+                </span>
+              </h1>
+            </Reveal>
+            <Reveal delay={0.16}>
+              <p
+                className="mt-7 max-w-xl text-lg leading-relaxed"
+                style={{ color: "var(--c-ink-soft)" }}
+              >
+                {hero?.subtitle ??
+                  "Expert legal services for individuals and businesses across Pokhara and Nepal."}
+              </p>
+            </Reveal>
+            <Reveal delay={0.24}>
+              <div className="mt-10 flex flex-wrap gap-4">
+                <Link to="/contact" className="btn btn-primary">
+                  {hero?.ctaPrimary ?? "Book a Consultation"}
+                  <ArrowRightIcon size={16} />
+                </Link>
+                <Link to="/services" className="btn btn-outline">
+                  {hero?.ctaSecondary ?? "Our Services"}
                 </Link>
               </div>
-              <div className="about-image">
-                <img src={intro.image} alt={intro.imageAlt} loading="lazy" width="600" height="400" />
+            </Reveal>
+          </div>
+
+          {/* Editorial side panel */}
+          <Reveal delay={0.2} className="lg:col-span-5">
+            <div
+              className="relative rounded-sm border p-8"
+              style={{
+                background: "var(--c-surface)",
+                borderColor: "var(--c-line)",
+              }}
+            >
+              <p
+                className="text-[0.68rem] font-semibold uppercase tracking-[0.22em]"
+                style={{ color: "var(--c-accent)" }}
+              >
+                Aabiskar Law Chamber
+              </p>
+              <p
+                className="mt-5 font-display text-[1.6rem] leading-snug"
+                style={{ color: "var(--c-ink)" }}
+              >
+                {FIRM.tagline}
+              </p>
+              <div
+                className="my-7 h-px w-full"
+                style={{ background: "var(--c-line)" }}
+              />
+              <dl className="space-y-4 text-[0.92rem]">
+                <div className="flex justify-between gap-4">
+                  <dt style={{ color: "var(--c-ink-faint)" }}>Office</dt>
+                  <dd
+                    className="text-right"
+                    style={{ color: "var(--c-ink)" }}
+                  >
+                    {FIRM.address.street}, {FIRM.address.city}
+                  </dd>
+                </div>
+                <div className="flex justify-between gap-4">
+                  <dt style={{ color: "var(--c-ink-faint)" }}>Phone</dt>
+                  <dd style={{ color: "var(--c-ink)" }}>
+                    <a
+                      href={`tel:${FIRM.phone}`}
+                      className="transition-colors hover:text-[color:var(--c-accent)]"
+                    >
+                      {FIRM.phoneDisplay}
+                    </a>
+                  </dd>
+                </div>
+                <div className="flex justify-between gap-4">
+                  <dt style={{ color: "var(--c-ink-faint)" }}>Email</dt>
+                  <dd style={{ color: "var(--c-ink)" }}>
+                    <a
+                      href={`mailto:${FIRM.email}`}
+                      className="break-all transition-colors hover:text-[color:var(--c-accent)]"
+                    >
+                      {FIRM.email}
+                    </a>
+                  </dd>
+                </div>
+              </dl>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* ---------------- Stats ---------------- */}
+      {loading ? (
+        <div className="container-page py-10">
+          <div className="grid grid-cols-2 gap-6 lg:grid-cols-4">
+            {[...Array(4)].map((_, i) => (
+              <Skeleton key={i} className="h-20" />
+            ))}
+          </div>
+        </div>
+      ) : stats.length > 0 ? (
+        <section
+          className="border-y"
+          style={{
+            borderColor: "var(--c-line)",
+            background: "var(--c-surface)",
+          }}
+        >
+          <div className="container-page grid grid-cols-2 gap-y-10 py-14 lg:grid-cols-4">
+            {stats.map((stat, i) => (
+              <Reveal
+                key={stat.id}
+                delay={i * 0.06}
+                className="border-l px-6 first:border-l-0 lg:px-8"
+              >
+                <div
+                  className="text-4xl font-medium sm:text-5xl"
+                  style={{
+                    fontFamily: "var(--font-display)",
+                    color: "var(--c-ink)",
+                  }}
+                >
+                  {stat.value}
+                </div>
+                <div
+                  className="mt-2 text-[0.78rem] font-semibold uppercase tracking-[0.14em]"
+                  style={{ color: "var(--c-ink-soft)" }}
+                >
+                  {stat.label}
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      {/* ---------------- Intro ---------------- */}
+      {intro && (
+        <section className="container-page py-20 sm:py-24">
+          <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+            <Reveal className="order-2 lg:order-1">
+              <p className="eyebrow">{intro.label}</p>
+              <h2 className="mt-5 text-3xl sm:text-4xl lg:text-[2.9rem]">
+                {intro.title}
+              </h2>
+              <div className="mt-6 space-y-5">
+                {intro.paragraphs.map((p, i) => (
+                  <p
+                    key={i}
+                    className="text-[1.02rem] leading-relaxed"
+                    style={{ color: "var(--c-ink-soft)" }}
+                    dangerouslySetInnerHTML={{ __html: p }}
+                  />
+                ))}
               </div>
-            </div>
+              <Link to="/about" className="link-underline mt-8 inline-flex">
+                Learn more about us
+                <ArrowUpRightIcon size={16} />
+              </Link>
+            </Reveal>
+            <Reveal delay={0.1} className="order-1 lg:order-2">
+              <div
+                className="relative aspect-[4/3] overflow-hidden rounded-sm border"
+                style={{ borderColor: "var(--c-line)" }}
+              >
+                <img
+                  src={intro.image}
+                  alt={intro.imageAlt || "Legal consultation"}
+                  width={600}
+                  height={400}
+                  loading="lazy"
+                  className="h-full w-full object-cover"
+                />
+                <div
+                  className="pointer-events-none absolute inset-0"
+                  style={{
+                    boxShadow: "inset 0 0 0 1px rgba(10,25,47,0.06)",
+                  }}
+                />
+              </div>
+            </Reveal>
           </div>
         </section>
       )}
 
-      {/* Features Section */}
-      {features && (
-        <section style={{ background: 'var(--bg-secondary)' }}>
-          <div className="container">
-            <div className="section-header">
-              <div className="section-label">{features.label}</div>
-              <h2 className="section-title">{features.title}</h2>
+      {/* ---------------- Practice areas (selected) ---------------- */}
+      {!loading && selectedAreas.length > 0 && (
+        <section
+          className="border-t"
+          style={{ borderColor: "var(--c-line)", background: "var(--c-raised)" }}
+        >
+          <div className="container-page py-20 sm:py-24">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+              <Reveal>
+                <p className="eyebrow">Practice Areas</p>
+                <h2 className="mt-5 max-w-xl text-3xl sm:text-4xl lg:text-[2.9rem]">
+                  Legal services tailored to your matter
+                </h2>
+              </Reveal>
+              <Reveal delay={0.1}>
+                <Link to="/services" className="link-underline">
+                  All practice areas
+                  <ArrowUpRightIcon size={16} />
+                </Link>
+              </Reveal>
             </div>
-            <div className="features-grid">
-              {features.cards.map((card, index) => (
-                <div key={index} className="feature-card">
-                  <div className="feature-icon">
-                    {card.icon === 'shield' && <ShieldIcon size={32} />}
-                    {card.icon === 'handshake' && <HandshakeIcon size={32} />}
-                    {card.icon === 'balance' && <BalanceIcon size={32} />}
-                  </div>
-                  <h3 className="feature-title">{card.title}</h3>
-                  <p className="feature-desc">{card.description}</p>
-                </div>
+
+            <div className="mt-14 divide-y border-t">
+              {selectedAreas.map((area, i) => (
+                <Reveal key={area.id} delay={i * 0.05}>
+                  <Link
+                    to={`/services#${area.id}`}
+                    className="group grid grid-cols-1 items-start gap-4 py-8 transition-colors sm:grid-cols-12 sm:gap-6"
+                    style={{ borderColor: "var(--c-line)" }}
+                  >
+                    <span
+                      className="text-sm sm:col-span-1"
+                      style={{ color: "var(--c-ink-faint)" }}
+                    >
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <div className="sm:col-span-4">
+                      <div className="flex items-center gap-3">
+                        <span style={{ color: "var(--c-accent)" }}>
+                          {renderIcon(area.icon, 22)}
+                        </span>
+                        <h3 className="text-xl transition-colors duration-200 group-hover:text-[color:var(--c-accent)]">
+                          {area.title}
+                        </h3>
+                      </div>
+                    </div>
+                    <p
+                      className="text-[0.98rem] leading-relaxed sm:col-span-6"
+                      style={{ color: "var(--c-ink-soft)" }}
+                    >
+                      {area.description}
+                    </p>
+                    <span
+                      className="hidden justify-end sm:col-span-1 sm:flex"
+                      style={{ color: "var(--c-ink-faint)" }}
+                    >
+                      <ArrowUpRightIcon
+                        size={20}
+                        className="transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                      />
+                    </span>
+                  </Link>
+                </Reveal>
               ))}
             </div>
           </div>
         </section>
       )}
 
-      {/* Why Choose Us Section */}
-      {whyChooseUs && (
-        <section>
-          <div className="container">
-            <div className="section-header">
-              <div className="section-label">{whyChooseUs.label}</div>
-              <h2 className="section-title">{whyChooseUs.title}</h2>
-            </div>
-            <div className="features-grid">
-              {whyChooseUs.cards.map((card, index) => (
-                <div key={index} className="feature-card">
-                  <div className="feature-icon">
-                    {card.icon === 'balance' && <BalanceIcon size={32} />}
-                    {card.icon === 'document' && <DocumentIcon size={32} />}
-                    {card.icon === 'chat' && <ChatIcon size={32} />}
-                  </div>
-                  <h3 className="feature-title">{card.title}</h3>
-                  <p className="feature-desc">{card.description}</p>
+      {/* ---------------- Why choose us ---------------- */}
+      {why && (
+        <section className="container-page py-20 sm:py-24">
+          <Reveal className="max-w-2xl">
+            <p className="eyebrow">{why.label}</p>
+            <h2 className="mt-5 text-3xl sm:text-4xl lg:text-[2.9rem]">
+              {why.title}
+            </h2>
+          </Reveal>
+          <div className="mt-14 grid gap-px overflow-hidden border sm:grid-cols-3"
+            style={{ background: "var(--c-line)", borderColor: "var(--c-line)" }}>
+            {why.cards.map((card, i) => (
+              <Reveal key={i} delay={i * 0.08}>
+                <div
+                  className="h-full p-8"
+                  style={{ background: "var(--c-canvas)" }}
+                >
+                  <span style={{ color: "var(--c-accent)" }}>
+                    {renderIcon(card.icon, 26)}
+                  </span>
+                  <h3 className="mt-6 text-xl">{card.title}</h3>
+                  <p
+                    className="mt-3 text-[0.96rem] leading-relaxed"
+                    style={{ color: "var(--c-ink-soft)" }}
+                  >
+                    {card.description}
+                  </p>
                 </div>
+              </Reveal>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* ---------------- Team preview ---------------- */}
+      {!loading && team.length > 0 && (
+        <section
+          className="border-t"
+          style={{ borderColor: "var(--c-line)", background: "var(--c-surface)" }}
+        >
+          <div className="container-page py-20 sm:py-24">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+              <Reveal>
+                <p className="eyebrow">Our Team</p>
+                <h2 className="mt-5 text-3xl sm:text-4xl lg:text-[2.9rem]">
+                  The advocates behind your case
+                </h2>
+              </Reveal>
+              <Reveal delay={0.1}>
+                <Link to="/team" className="link-underline">
+                  Meet the full team
+                  <ArrowUpRightIcon size={16} />
+                </Link>
+              </Reveal>
+            </div>
+            <div className="mt-14 grid gap-10 sm:grid-cols-2 lg:max-w-3xl">
+              {team.slice(0, 2).map((member, i) => (
+                <Reveal key={member.id} delay={i * 0.1}>
+                  <div className="flex items-start gap-5">
+                    <div
+                      className="h-20 w-20 shrink-0 overflow-hidden rounded-full border"
+                      style={{ borderColor: "var(--c-line)" }}
+                    >
+                      {member.image ? (
+                        <img
+                          src={member.image}
+                          alt={member.name}
+                          width={80}
+                          height={80}
+                          loading="lazy"
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        <div
+                          className="flex h-full w-full items-center justify-center"
+                          style={{ color: "var(--c-ink-faint)" }}
+                        >
+                          {renderIcon("balance", 28)}
+                        </div>
+                      )}
+                    </div>
+                    <div>
+                      <h3 className="text-lg">{member.name}</h3>
+                      <p
+                        className="mt-1 text-[0.72rem] font-semibold uppercase tracking-[0.14em]"
+                        style={{ color: "var(--c-accent)" }}
+                      >
+                        {member.role}
+                      </p>
+                      {member.specialization && (
+                        <p
+                          className="mt-2 text-[0.92rem]"
+                          style={{ color: "var(--c-ink-soft)" }}
+                        >
+                          {member.specialization}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </Reveal>
               ))}
             </div>
           </div>
         </section>
       )}
 
-      {/* CTA Section */}
+      {/* ---------------- Testimonials ---------------- */}
+      {!loading && testimonials.length > 0 && (
+        <section className="container-page py-20 sm:py-24">
+          <Reveal className="max-w-2xl">
+            <p className="eyebrow">Client Stories</p>
+            <h2 className="mt-5 text-3xl sm:text-4xl lg:text-[2.9rem]">
+              What our clients say
+            </h2>
+          </Reveal>
+          <div className="mt-14 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            {testimonials.slice(0, 3).map((t, i) => (
+              <Reveal key={t.id} delay={i * 0.08}>
+                <figure
+                  className="flex h-full flex-col rounded-sm border p-8"
+                  style={{
+                    background: "var(--c-surface)",
+                    borderColor: "var(--c-line)",
+                  }}
+                >
+                  <span style={{ color: "var(--c-accent)" }}>
+                    <QuoteIcon size={28} />
+                  </span>
+                  <blockquote
+                    className="mt-5 flex-1 text-[1rem] leading-relaxed"
+                    style={{ color: "var(--c-ink-soft)" }}
+                  >
+                    {t.text}
+                  </blockquote>
+                  <figcaption className="mt-6 border-t pt-5" style={{ borderColor: "var(--c-line)" }}>
+                    <div
+                      className="font-display text-[1.05rem]"
+                      style={{ color: "var(--c-ink)" }}
+                    >
+                      {t.name}
+                    </div>
+                    <div
+                      className="text-[0.78rem] uppercase tracking-[0.12em]"
+                      style={{ color: "var(--c-ink-faint)" }}
+                    >
+                      {t.role}
+                    </div>
+                  </figcaption>
+                </figure>
+              </Reveal>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* ---------------- CTA ---------------- */}
       {cta && (
-        <section className="cta-section">
-          <div className="container">
-            <h2 className="cta-title">{cta.title}</h2>
-            <p className="cta-subtitle">{cta.subtitle}</p>
-            <div className="cta-buttons">
-              <Link to="/contact" className="btn-primary">
-                {cta.primaryBtn}
-              </Link>
-              <Link to="/services" className="btn-secondary">
-                <span>{cta.secondaryBtn}</span>
-              </Link>
-            </div>
+        <section className="navy-band">
+          <div className="container-page relative z-10 py-20 text-center sm:py-24">
+            <Reveal>
+              <h2
+                className="mx-auto max-w-3xl text-3xl sm:text-4xl lg:text-[3rem]"
+                style={{ color: "#fff" }}
+              >
+                {cta.title}
+              </h2>
+            </Reveal>
+            <Reveal delay={0.08}>
+              <p
+                className="mx-auto mt-5 max-w-xl text-lg"
+                style={{ color: "rgba(255,255,255,0.72)" }}
+              >
+                {cta.subtitle}
+              </p>
+            </Reveal>
+            <Reveal delay={0.16}>
+              <div className="mt-10 flex flex-wrap justify-center gap-4">
+                <Link to="/contact" className="btn btn-gold">
+                  {cta.primaryBtn}
+                  <ArrowRightIcon size={16} />
+                </Link>
+                <Link to="/services" className="btn btn-ghost-light">
+                  {cta.secondaryBtn}
+                </Link>
+              </div>
+            </Reveal>
+            <Reveal delay={0.24}>
+              <p
+                className="mt-10 text-[0.82rem] uppercase tracking-[0.14em]"
+                style={{ color: "rgba(255,255,255,0.45)" }}
+              >
+                {FIRM_ADDRESS_LINE}
+              </p>
+            </Reveal>
           </div>
         </section>
       )}
-    </div>
-  )
+    </>
+  );
 }

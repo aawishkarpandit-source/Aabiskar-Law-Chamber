@@ -1,200 +1,252 @@
-import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
-import { Helmet } from 'react-helmet-async'
-import { getSeniorMembers, getAssociates } from '../lib/queries'
-import type { TeamMember } from '../types'
-import { BalanceIcon, PhoneIcon, UserIcon } from '../components/Icons'
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import SEO from "../components/SEO";
+import Reveal from "../components/Reveal";
+import PageHeader from "../components/PageHeader";
+import { Skeleton } from "../components/Feedback";
+import { renderIcon } from "../lib/icons";
+import { SITE_URL } from "../lib/site";
+import { ArrowRightIcon, PhoneIcon } from "../components/Icons";
+import { getSeniorMembers, getAssociates } from "../lib/queries";
+import type { TeamMember } from "../types";
 
-const SITE_URL = 'https://aabiskar-law-chamber.vercel.app'
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+    {
+      "@type": "ListItem",
+      position: 2,
+      name: "Team",
+      item: `${SITE_URL}/team`,
+    },
+  ],
+};
+
+const isPhone = (v?: string | null) =>
+  !!v && v.trim() !== "" && v !== "Coming Soon" && v !== "TBA";
+
+function MemberCard({ member }: { member: TeamMember }) {
+  return (
+    <div
+      className="flex h-full flex-col rounded-sm border p-7"
+      style={{ background: "var(--c-surface)", borderColor: "var(--c-line)" }}
+    >
+      <div className="flex items-center gap-4">
+        <div
+          className="h-24 w-24 shrink-0 overflow-hidden rounded-full border"
+          style={{ borderColor: "var(--c-line)" }}
+        >
+          {member.image ? (
+            <img
+              src={member.image}
+              alt={member.name}
+              width={96}
+              height={96}
+              loading="lazy"
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            <div
+              className="flex h-full w-full items-center justify-center"
+              style={{ color: "var(--c-ink-faint)" }}
+            >
+              {renderIcon(member.member_type === "senior" ? "balance" : "people", 32)}
+            </div>
+          )}
+        </div>
+        <div>
+          <h3 className="text-xl">{member.name}</h3>
+          <p
+            className="mt-1 text-[0.72rem] font-semibold uppercase tracking-[0.14em]"
+            style={{ color: "var(--c-accent)" }}
+          >
+            {member.role}
+          </p>
+        </div>
+      </div>
+
+      <dl className="mt-6 space-y-3 border-t pt-5 text-[0.92rem]" style={{ borderColor: "var(--c-line)" }}>
+        {member.specialization && (
+          <div className="flex gap-3">
+            <dt className="w-28 shrink-0 text-[0.72rem] font-semibold uppercase tracking-[0.12em]" style={{ color: "var(--c-ink-faint)" }}>
+              Focus
+            </dt>
+            <dd style={{ color: "var(--c-ink-soft)" }}>{member.specialization}</dd>
+          </div>
+        )}
+        {member.experience && (
+          <div className="flex gap-3">
+            <dt className="w-28 shrink-0 text-[0.72rem] font-semibold uppercase tracking-[0.12em]" style={{ color: "var(--c-ink-faint)" }}>
+              Experience
+            </dt>
+            <dd style={{ color: "var(--c-ink-soft)" }}>{member.experience}</dd>
+          </div>
+        )}
+        {isPhone(member.phone) && (
+          <div className="flex gap-3">
+            <dt className="w-28 shrink-0 text-[0.72rem] font-semibold uppercase tracking-[0.12em]" style={{ color: "var(--c-ink-faint)" }}>
+              Phone
+            </dt>
+            <dd>
+              <a
+                href={`tel:${member.phone}`}
+                className="inline-flex items-center gap-2 transition-colors"
+                style={{ color: "var(--c-accent)" }}
+              >
+                <PhoneIcon size={14} />
+                {member.phone}
+              </a>
+            </dd>
+          </div>
+        )}
+      </dl>
+    </div>
+  );
+}
 
 export default function Team() {
-  const [seniors, setSeniors] = useState<TeamMember[]>([])
-  const [associates, setAssociates] = useState<TeamMember[]>([])
-  const [loading, setLoading] = useState(true)
+  const [seniors, setSeniors] = useState<TeamMember[]>([]);
+  const [associates, setAssociates] = useState<TeamMember[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchData = async () => {
+    let cancelled = false;
+    const run = async () => {
       try {
         const [seniorsData, associatesData] = await Promise.all([
           getSeniorMembers(),
           getAssociates(),
-        ])
-        setSeniors(seniorsData)
-        setAssociates(associatesData)
-      } catch (error) {
-        console.error('Error fetching team:', error)
+        ]);
+        if (cancelled) return;
+        setSeniors(seniorsData);
+        setAssociates(associatesData);
+      } catch (err) {
+        console.error("Error fetching team:", err);
       } finally {
-        setLoading(false)
+        if (!cancelled) setLoading(false);
       }
-    }
+    };
+    run();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
-    fetchData()
-  }, [])
+  const teamLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "Aabiskar Law Chamber Team",
+    itemListElement: [...seniors, ...associates].map((m, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      item: {
+        "@type": "Person",
+        name: m.name,
+        jobTitle: m.role,
+        worksFor: { "@type": "Organization", name: "Aabiskar Law Chamber" },
+      },
+    })),
+  };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center" style={{ minHeight: '50vh' }}>
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2" style={{ borderColor: '#c5a059' }}></div>
-      </div>
-    )
-  }
+  const jsonLd: Record<string, unknown>[] = [breadcrumbLd];
+  if (seniors.length + associates.length > 0) jsonLd.push(teamLd);
 
   return (
     <>
-      <Helmet>
-        <title>Our Team | Aabiskar Law Chamber</title>
-        <meta name="description" content="Meet our experienced legal team led by Adv. Hari Prasad Pandit with over 20 years of expertise in criminal, property, and corporate law." />
-        <link rel="canonical" href={SITE_URL + '/team'} />
-        <meta property="og:title" content="Our Team | Aabiskar Law Chamber" />
-        <meta property="og:description" content="Meet our experienced legal team led by Adv. Hari Prasad Pandit with over 20 years of expertise in criminal, property, and corporate law." />
-        <meta property="og:url" content={SITE_URL + '/team'} />
-        <meta property="og:image" content={SITE_URL + '/og-image.png'} />
-        <meta name="twitter:title" content="Our Team | Aabiskar Law Chamber" />
-        <meta name="twitter:description" content="Meet our experienced legal team led by Adv. Hari Prasad Pandit with over 20 years of expertise in criminal, property, and corporate law." />
-        <meta name="twitter:image" content={SITE_URL + '/og-image.png'} />
-      </Helmet>
+      <SEO
+        title="Our Team"
+        description="Meet the advocates and legal associates of Aabiskar Law Chamber in Pokhara, led by Adv. Hari Prasad Pandit."
+        path="/team"
+        jsonLd={jsonLd}
+      />
 
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
-        "@context": "https://schema.org",
-        "@type": "BreadcrumbList",
-        "itemListElement": [
-          { "@type": "ListItem", "position": 1, "name": "Home", "item": SITE_URL },
-          { "@type": "ListItem", "position": 2, "name": "Our Team", "item": SITE_URL + "/team" }
-        ]
-      }) }} />
+      <PageHeader
+        eyebrow="Our Team"
+        title="Advocates dedicated to your matter"
+        subtitle="Experienced legal professionals committed to clear counsel and diligent representation."
+      />
 
-      {/* Page Header */}
-      <section className="page-header">
-        <div className="container">
-          <div className="section-label" style={{ color: '#c5a059' }}>Our Team</div>
-          <h1 className="page-title">Meet Our Experts</h1>
-          <p className="page-subtitle">
-            Our team of experienced legal professionals is dedicated to
-            providing exceptional representation and counsel.
-          </p>
-        </div>
-      </section>
-
-      {/* Senior Team Section */}
-      <section>
-        <div className="container">
-          <div className="section-header">
-            <div className="section-label">Leadership</div>
-            <h2 className="section-title">Senior Advocates</h2>
-          </div>
-          <div className="team-grid" style={{ maxWidth: '900px', margin: '0 auto' }}>
-            {seniors.map((member) => (
-              <div key={member.id} className="team-card">
-                <div className="team-photo">
-                  {member.image ? (
-                    <img
-                      src={member.image}
-                      alt={member.name}
-                      loading="lazy"
-                      width="90"
-                      height="90"
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                    />
-                  ) : (
-                    <div
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        background: 'linear-gradient(135deg, #0a192f 0%, #112240 100%)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}
-                    >
-                      <BalanceIcon size={32} />
-                    </div>
-                  )}
-                </div>
-                <div className="team-info">
-                  <h3 className="team-name">{member.name}</h3>
-                  <div className="team-role">{member.role}</div>
-                  {member.specialization && (
-                    <div className="team-specialization">{member.specialization}</div>
-                  )}
-                  {member.experience && (
-                    <div className="team-experience">{member.experience}</div>
-                  )}
-                  {member.phone && member.phone !== 'Coming Soon' && (
-                    <div className="team-phone">
-                      <PhoneIcon size={14} className="inline-block" style={{ verticalAlign: 'middle', marginRight: '4px' }} /> <a href={`tel:${member.phone}`}>{member.phone}</a>
-                    </div>
-                  )}
-                </div>
-              </div>
+      {/* Seniors */}
+      <section className="container-page py-16 sm:py-20">
+        <Reveal className="max-w-2xl">
+          <p className="eyebrow">Leadership</p>
+          <h2 className="mt-5 text-3xl sm:text-4xl">Senior Advocates</h2>
+        </Reveal>
+        {loading ? (
+          <div className="mt-12 grid gap-8 sm:grid-cols-2">
+            {[...Array(2)].map((_, i) => (
+              <Skeleton key={i} className="h-52 w-full" />
             ))}
           </div>
-        </div>
+        ) : seniors.length === 0 ? (
+          <p className="mt-8" style={{ color: "var(--c-ink-soft)" }}>
+            No senior advocates to show right now.
+          </p>
+        ) : (
+          <div className="mt-12 grid gap-8 sm:grid-cols-2">
+            {seniors.map((member, i) => (
+              <Reveal key={member.id} delay={i * 0.08}>
+                <MemberCard member={member} />
+              </Reveal>
+            ))}
+          </div>
+        )}
       </section>
 
-      {/* Associates Section */}
-      {associates.length > 0 && (
-        <section style={{ background: 'var(--bg-secondary)' }}>
-          <div className="container">
-            <div className="section-header">
-              <div className="section-label">Our Team</div>
-              <h2 className="section-title">Legal Associates</h2>
-            </div>
-            <div className="team-grid" style={{ maxWidth: '900px', margin: '0 auto' }}>
-              {associates.map((member) => (
-                <div key={member.id} className="team-card">
-                  <div className="team-photo">
-                    {member.image ? (
-                      <img
-                        src={member.image}
-                        alt={member.name}
-                        loading="lazy"
-                        width="90"
-                        height="90"
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                      />
-                    ) : (
-                      <div
-                        style={{
-                          width: '100%',
-                          height: '100%',
-                          background: 'linear-gradient(135deg, #0a192f 0%, #112240 100%)',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                        }}
-                      >
-                        <UserIcon size={32} />
-                      </div>
-                    )}
-                  </div>
-                  <div className="team-info">
-                    <h3 className="team-name">{member.name}</h3>
-                    <div className="team-role">{member.role}</div>
-                    {member.specialization && (
-                      <div className="team-specialization">{member.specialization}</div>
-                    )}
-                  </div>
-                </div>
+      {/* Associates */}
+      {!loading && associates.length > 0 && (
+        <section
+          className="border-t"
+          style={{
+            borderColor: "var(--c-line)",
+            background: "var(--c-raised)",
+          }}
+        >
+          <div className="container-page py-16 sm:py-20">
+            <Reveal className="max-w-2xl">
+              <p className="eyebrow">Our Team</p>
+              <h2 className="mt-5 text-3xl sm:text-4xl">Legal Associates</h2>
+            </Reveal>
+            <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+              {associates.map((member, i) => (
+                <Reveal key={member.id} delay={i * 0.06}>
+                  <MemberCard member={member} />
+                </Reveal>
               ))}
             </div>
           </div>
         </section>
       )}
 
-      {/* CTA Section */}
-      <section className="cta-section">
-        <div className="container">
-          <h2 className="cta-title">Ready to Work With Us?</h2>
-          <p className="cta-subtitle">
-            Schedule a consultation with our experienced legal team today.
-          </p>
-          <div className="cta-buttons">
-            <Link to="/contact" className="btn-primary">
-              Contact Us
-            </Link>
-          </div>
+      {/* CTA */}
+      <section className="navy-band">
+        <div className="container-page relative z-10 py-20 text-center sm:py-24">
+          <Reveal>
+            <h2
+              className="mx-auto max-w-2xl text-3xl sm:text-4xl"
+              style={{ color: "#fff" }}
+            >
+              Work with our team
+            </h2>
+            <p
+              className="mx-auto mt-4 max-w-lg text-lg"
+              style={{ color: "rgba(255,255,255,0.72)" }}
+            >
+              Schedule a consultation with our legal professionals today.
+            </p>
+          </Reveal>
+          <Reveal delay={0.1}>
+            <div className="mt-8">
+              <Link to="/contact" className="btn btn-gold">
+                Contact Us
+                <ArrowRightIcon size={16} />
+              </Link>
+            </div>
+          </Reveal>
         </div>
       </section>
     </>
-  )
+  );
 }

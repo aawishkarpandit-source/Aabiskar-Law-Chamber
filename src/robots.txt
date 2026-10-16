@@ -1,7 +1,0 @@
-User-agent: *
-Allow: /
-Disallow: /admin
-Disallow: /info/
-Disallow: /components/
-
-Sitemap: https://aabiskar-law-chamber.vercel.app/sitemap.xml

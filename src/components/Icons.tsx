@@ -202,3 +202,107 @@ export function ChevronUpIcon(props: IconProps) {
     </SvgIcon>
   )
 }
+
+export function ArrowRightIcon(props: IconProps) {
+  return (
+    <SvgIcon {...props}>
+      <line x1="5" y1="12" x2="19" y2="12" />
+      <polyline points="12 5 19 12 12 19" />
+    </SvgIcon>
+  )
+}
+
+export function ArrowUpRightIcon(props: IconProps) {
+  return (
+    <SvgIcon {...props}>
+      <line x1="7" y1="17" x2="17" y2="7" />
+      <polyline points="7 7 17 7 17 17" />
+    </SvgIcon>
+  )
+}
+
+export function GavelIcon(props: IconProps) {
+  return (
+    <SvgIcon {...props}>
+      <path d="m14.5 12.5-8 8a2.12 2.12 0 0 1-3-3l8-8" />
+      <path d="m16 16 6-6" />
+      <path d="m8 8 6-6" />
+      <path d="m9 7 8 8" />
+      <path d="m21 11-8-8" />
+    </SvgIcon>
+  )
+}
+
+export function ScaleIcon(props: IconProps) {
+  return (
+    <SvgIcon {...props}>
+      <path d="M12 3v18" />
+      <path d="M7 7h10" />
+      <path d="m5 7-3 7a3 3 0 0 0 6 0z" />
+      <path d="m19 7-3 7a3 3 0 0 0 6 0z" />
+      <path d="M7 7 4 21" />
+      <path d="m17 7 3 14" />
+    </SvgIcon>
+  )
+}
+
+export function BuildingIcon(props: IconProps) {
+  return (
+    <SvgIcon {...props}>
+      <rect x="4" y="2" width="16" height="20" rx="1" />
+      <path d="M9 22v-4h6v4" />
+      <path d="M8 6h.01M12 6h.01M16 6h.01M8 10h.01M12 10h.01M16 10h.01M8 14h.01M12 14h.01M16 14h.01" />
+    </SvgIcon>
+  )
+}
+
+export function LandIcon(props: IconProps) {
+  return (
+    <SvgIcon {...props}>
+      <path d="M3 21h18" />
+      <path d="M5 21V8l7-5 7 5v13" />
+      <path d="M9 21v-6h6v6" />
+    </SvgIcon>
+  )
+}
+
+export function BankIcon(props: IconProps) {
+  return (
+    <SvgIcon {...props}>
+      <path d="M3 21h18" />
+      <path d="M5 21V10" />
+      <path d="M19 21V10" />
+      <path d="M9 21V10" />
+      <path d="M15 21V10" />
+      <path d="m12 3 9 5H3z" />
+    </SvgIcon>
+  )
+}
+
+export function CybersIcon(props: IconProps) {
+  return (
+    <SvgIcon {...props}>
+      <rect x="2" y="4" width="20" height="13" rx="2" />
+      <path d="M8 21h8" />
+      <path d="M12 17v4" />
+      <path d="m9 10 2 2 4-4" />
+    </SvgIcon>
+  )
+}
+
+export function QuoteIcon(props: IconProps) {
+  return (
+    <svg
+      className={props.className}
+      style={props.style}
+      width={props.size ?? 24}
+      height={props.size ?? 24}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      stroke="none"
+      aria-hidden="true"
+    >
+      <path d="M9.5 6C6.5 6 4 8.5 4 11.5V18h6v-6H7c0-1.7 1.3-3 3-3V6zm10 0c-3 0-5.5 2.5-5.5 5.5V18h6v-6h-3c0-1.7 1.3-3 3-3V6z" />
+    </svg>
+  )
+}
