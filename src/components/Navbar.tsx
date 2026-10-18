@@ -1,15 +1,16 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useTheme } from "../hooks/useTheme";
+import { useLanguage } from "../hooks/useLanguage";
 import { SunIcon, MoonIcon, CloseIcon } from "./Icons";
 
 const navLinks = [
-  { label: "Home", href: "/" },
-  { label: "About", href: "/about" },
-  { label: "Practice Areas", href: "/services" },
-  { label: "Team", href: "/team" },
-  { label: "Contact", href: "/contact" },
-];
+  { key: "nav.home", href: "/" },
+  { key: "nav.about", href: "/about" },
+  { key: "nav.services", href: "/services" },
+  { key: "nav.team", href: "/team" },
+  { key: "nav.contact", href: "/contact" },
+] as const;
 
 /** Theme-aware wordmark used in the header (scales + adapts to light/dark). */
 function Wordmark() {
@@ -36,6 +37,7 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
   const { isDark, toggleTheme } = useTheme();
+  const { lang, setLang, t } = useLanguage();
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -88,7 +90,7 @@ export default function Navbar() {
                   : "var(--c-ink-soft)",
               }}
             >
-              {link.label}
+              {t(link.key)}
               <span
                 aria-hidden="true"
                 className="absolute -bottom-1 left-0 h-px w-full origin-left transition-transform duration-300"
@@ -102,9 +104,37 @@ export default function Navbar() {
         </nav>
 
         <div className="flex items-center gap-2 sm:gap-3">
+          {/* Language toggle */}
+          <div
+            role="group"
+            aria-label={t("nav.langGroup")}
+            className="hidden items-center rounded-full border sm:flex"
+            style={{ borderColor: "var(--c-line)" }}
+          >
+            {(["en", "ne"] as const).map((code) => (
+              <button
+                key={code}
+                onClick={() => setLang(code)}
+                aria-pressed={lang === code}
+                className="px-3 py-1.5 text-[0.7rem] font-semibold uppercase tracking-[0.12em] transition-colors duration-200"
+                style={{
+                  color:
+                    lang === code
+                      ? "var(--c-canvas)"
+                      : "var(--c-ink-soft)",
+                  background:
+                    lang === code ? "var(--c-accent)" : "transparent",
+                  borderRadius: "9999px",
+                }}
+              >
+                {code === "en" ? "EN" : "नेपाली"}
+              </button>
+            ))}
+          </div>
+
           <button
             onClick={toggleTheme}
-            aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+            aria-label={isDark ? t("theme.light") : t("theme.dark")}
             aria-pressed={isDark}
             className="flex h-11 w-11 items-center justify-center rounded-full border transition-colors duration-200"
             style={{ borderColor: "var(--c-line)", color: "var(--c-ink-soft)" }}
@@ -113,13 +143,13 @@ export default function Navbar() {
           </button>
 
           <Link to="/contact" className="btn btn-primary hidden sm:inline-flex">
-            Book a Consultation
+            {t("cta.book")}
           </Link>
 
           {/* Mobile menu toggle */}
           <button
             onClick={() => setIsOpen((v) => !v)}
-            aria-label={isOpen ? "Close menu" : "Open menu"}
+            aria-label={isOpen ? t("nav.closeMenu") : t("nav.openMenu")}
             aria-expanded={isOpen}
             aria-controls="mobile-menu"
             className="flex h-11 w-11 items-center justify-center rounded-full border lg:hidden"
@@ -172,7 +202,7 @@ export default function Navbar() {
                   : "var(--c-ink)",
               }}
             >
-              <span>{link.label}</span>
+              <span>{t(link.key)}</span>
               <span
                 className="text-xs font-sans"
                 style={{ color: "var(--c-ink-faint)" }}
@@ -186,8 +216,34 @@ export default function Navbar() {
             onClick={() => setIsOpen(false)}
             className="btn btn-primary mt-8 w-full"
           >
-            Book a Consultation
+            {t("cta.book")}
           </Link>
+
+          {/* Language toggle (mobile) */}
+          <div
+            role="group"
+            aria-label={t("nav.langGroup")}
+            className="mt-6 flex items-center gap-2"
+          >
+            {(["en", "ne"] as const).map((code) => (
+              <button
+                key={code}
+                onClick={() => setLang(code)}
+                aria-pressed={lang === code}
+                className="flex-1 rounded-full border px-4 py-2.5 text-[0.78rem] font-semibold uppercase tracking-[0.12em] transition-colors duration-200"
+                style={{
+                  borderColor:
+                    lang === code ? "var(--c-accent)" : "var(--c-line)",
+                  color:
+                    lang === code ? "var(--c-canvas)" : "var(--c-ink-soft)",
+                  background:
+                    lang === code ? "var(--c-accent)" : "transparent",
+                }}
+              >
+                {code === "en" ? "English" : "नेपाली"}
+              </button>
+            ))}
+          </div>
           <p
             className="mt-8 text-sm"
             style={{ color: "var(--c-ink-faint)" }}

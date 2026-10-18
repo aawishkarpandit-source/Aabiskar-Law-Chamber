@@ -6,6 +6,7 @@ import PageHeader from "../components/PageHeader";
 import { Skeleton } from "../components/Feedback";
 import { renderIcon } from "../lib/icons";
 import { SITE_URL } from "../lib/site";
+import { useLanguage } from "../hooks/useLanguage";
 import { ArrowRightIcon, PhoneIcon } from "../components/Icons";
 import { getSeniorMembers, getAssociates } from "../lib/queries";
 import type { TeamMember } from "../types";
@@ -28,6 +29,7 @@ const isPhone = (v?: string | null) =>
   !!v && v.trim() !== "" && v !== "Coming Soon" && v !== "TBA";
 
 function MemberCard({ member }: { member: TeamMember }) {
+  const { t } = useLanguage();
   return (
     <div
       className="flex h-full flex-col rounded-sm border p-7"
@@ -71,7 +73,7 @@ function MemberCard({ member }: { member: TeamMember }) {
         {member.specialization && (
           <div className="flex gap-3">
             <dt className="w-28 shrink-0 text-[0.72rem] font-semibold uppercase tracking-[0.12em]" style={{ color: "var(--c-ink-faint)" }}>
-              Focus
+              {t("team.focus")}
             </dt>
             <dd style={{ color: "var(--c-ink-soft)" }}>{member.specialization}</dd>
           </div>
@@ -79,7 +81,7 @@ function MemberCard({ member }: { member: TeamMember }) {
         {member.experience && (
           <div className="flex gap-3">
             <dt className="w-28 shrink-0 text-[0.72rem] font-semibold uppercase tracking-[0.12em]" style={{ color: "var(--c-ink-faint)" }}>
-              Experience
+              {t("team.experience")}
             </dt>
             <dd style={{ color: "var(--c-ink-soft)" }}>{member.experience}</dd>
           </div>
@@ -87,7 +89,7 @@ function MemberCard({ member }: { member: TeamMember }) {
         {isPhone(member.phone) && (
           <div className="flex gap-3">
             <dt className="w-28 shrink-0 text-[0.72rem] font-semibold uppercase tracking-[0.12em]" style={{ color: "var(--c-ink-faint)" }}>
-              Phone
+              {t("team.phone")}
             </dt>
             <dd>
               <a
@@ -107,6 +109,7 @@ function MemberCard({ member }: { member: TeamMember }) {
 }
 
 export default function Team() {
+  const { t } = useLanguage();
   const [seniors, setSeniors] = useState<TeamMember[]>([]);
   const [associates, setAssociates] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
@@ -163,16 +166,16 @@ export default function Team() {
       />
 
       <PageHeader
-        eyebrow="Our Team"
-        title="Advocates dedicated to your matter"
-        subtitle="Experienced legal professionals committed to clear counsel and diligent representation."
+        eyebrow={t("team.eyebrow")}
+        title={t("team.title")}
+        subtitle={t("team.subtitle")}
       />
 
       {/* Seniors */}
       <section className="container-page py-16 sm:py-20">
         <Reveal className="max-w-2xl">
-          <p className="eyebrow">Leadership</p>
-          <h2 className="mt-5 text-3xl sm:text-4xl">Senior Advocates</h2>
+          <p className="eyebrow">{t("team.leadership")}</p>
+          <h2 className="mt-5 text-3xl sm:text-4xl">{t("team.seniorHeading")}</h2>
         </Reveal>
         {loading ? (
           <div className="mt-12 grid gap-8 sm:grid-cols-2">
@@ -182,7 +185,7 @@ export default function Team() {
           </div>
         ) : seniors.length === 0 ? (
           <p className="mt-8" style={{ color: "var(--c-ink-soft)" }}>
-            No senior advocates to show right now.
+            {t("team.seniorEmpty")}
           </p>
         ) : (
           <div className="mt-12 grid gap-8 sm:grid-cols-2">
@@ -206,8 +209,8 @@ export default function Team() {
         >
           <div className="container-page py-16 sm:py-20">
             <Reveal className="max-w-2xl">
-              <p className="eyebrow">Our Team</p>
-              <h2 className="mt-5 text-3xl sm:text-4xl">Legal Associates</h2>
+              <p className="eyebrow">{t("team.eyebrow")}</p>
+              <h2 className="mt-5 text-3xl sm:text-4xl">{t("team.assocHeading")}</h2>
             </Reveal>
             <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
               {associates.map((member, i) => (
@@ -228,19 +231,19 @@ export default function Team() {
               className="mx-auto max-w-2xl text-3xl sm:text-4xl"
               style={{ color: "#fff" }}
             >
-              Work with our team
+              {t("team.ctaTitle")}
             </h2>
             <p
               className="mx-auto mt-4 max-w-lg text-lg"
               style={{ color: "rgba(255,255,255,0.72)" }}
             >
-              Schedule a consultation with our legal professionals today.
+              {t("team.ctaSub")}
             </p>
           </Reveal>
           <Reveal delay={0.1}>
             <div className="mt-8">
               <Link to="/contact" className="btn btn-gold">
-                Contact Us
+                {t("team.ctaBtn")}
                 <ArrowRightIcon size={16} />
               </Link>
             </div>

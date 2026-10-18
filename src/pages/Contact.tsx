@@ -12,13 +12,15 @@ import {
 import { getSiteConfig, submitContactForm } from "../lib/queries";
 import type { SiteConfig, ContactSubmission, ContactFormErrors } from "../types";
 import { SITE_URL, FIRM } from "../lib/site";
+import { useLanguage } from "../hooks/useLanguage";
+import type { TranslationKey } from "../lib/i18n";
 
-const SUBJECT_OPTIONS = [
-  "General Inquiry",
-  "Legal Consultation",
-  "Case Discussion",
-  "Appointment Request",
-  "Other",
+const SUBJECT_OPTIONS: { value: string; labelKey: TranslationKey }[] = [
+  { value: "General Inquiry", labelKey: "contact.subGeneral" },
+  { value: "Legal Consultation", labelKey: "contact.subConsult" },
+  { value: "Case Discussion", labelKey: "contact.subCase" },
+  { value: "Appointment Request", labelKey: "contact.subAppointment" },
+  { value: "Other", labelKey: "contact.subOther" },
 ];
 
 const breadcrumbLd = {
@@ -57,6 +59,7 @@ const contactPageLd = {
 };
 
 export default function Contact() {
+  const { t } = useLanguage();
   const [siteConfig, setSiteConfig] = useState<SiteConfig | null>(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -94,14 +97,14 @@ export default function Contact() {
 
   const validateForm = (): boolean => {
     const newErrors: ContactFormErrors = {};
-    if (!formData.name.trim()) newErrors.name = "Name is required";
+    if (!formData.name.trim()) newErrors.name = t("contact.errName");
     if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
+      newErrors.email = t("contact.errEmail");
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "Please enter a valid email address";
+      newErrors.email = t("contact.errEmailInvalid");
     }
-    if (!formData.subject.trim()) newErrors.subject = "Please select a subject";
-    if (!formData.message.trim()) newErrors.message = "Message is required";
+    if (!formData.subject.trim()) newErrors.subject = t("contact.errSubject");
+    if (!formData.message.trim()) newErrors.message = t("contact.errMessage");
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -124,13 +127,11 @@ export default function Contact() {
         setSubmitted(true);
         setFormData({ name: "", email: "", phone: "", subject: "", message: "" });
       } else {
-        setSubmitError(
-          "Sorry, we couldn't send your message right now. Please try again, or call us directly."
-        );
+        setSubmitError(t("contact.errSubmit"));
       }
     } catch (err) {
       console.error("Error submitting form:", err);
-      setSubmitError("Something went wrong. Please try again.");
+      setSubmitError(t("contact.errGeneric"));
     } finally {
       setSubmitting(false);
     }
@@ -149,7 +150,7 @@ export default function Contact() {
   const infoRows = [
     {
       icon: <LocationIcon size={20} />,
-      label: "Office",
+      label: t("contact.office"),
       lines: siteConfig
         ? [
             siteConfig.location.office,
@@ -166,22 +167,22 @@ export default function Contact() {
     },
     {
       icon: <PhoneIcon size={20} />,
-      label: "Phone",
+      label: t("contact.phone"),
       lines: [siteConfig?.phone ?? FIRM.phoneDisplay],
       href: `tel:${FIRM.phone}`,
     },
     {
       icon: <EmailIcon size={20} />,
-      label: "Email",
+      label: t("contact.email"),
       lines: [siteConfig?.email ?? FIRM.email],
       href: `mailto:${FIRM.email}`,
     },
     {
       icon: <ClockIcon size={20} />,
-      label: "Office Hours",
+      label: t("contact.hours"),
       lines: [
-        `Mon – Fri: ${siteConfig?.officeHours.weekdays ?? FIRM.officeHours.weekdays}`,
-        `Saturday: ${siteConfig?.officeHours.saturday ?? FIRM.officeHours.saturday}`,
+        `${t("contact.monFri")}: ${siteConfig?.officeHours.weekdays ?? FIRM.officeHours.weekdays}`,
+        `${t("contact.saturday")}: ${siteConfig?.officeHours.saturday ?? FIRM.officeHours.saturday}`,
         siteConfig?.officeHours.note ?? FIRM.officeHours.note,
       ],
     },
@@ -197,18 +198,18 @@ export default function Contact() {
       />
 
       <PageHeader
-        eyebrow="Contact"
-        title="Start the conversation"
-        subtitle="Ready to discuss your legal needs? Reach out and we'll respond as soon as we can."
+        eyebrow={t("contact.eyebrow")}
+        title={t("contact.title")}
+        subtitle={t("contact.subtitle")}
       />
 
       <section className="container-page py-16 sm:py-20">
         <div className="grid gap-12 lg:grid-cols-5 lg:gap-16">
           {/* Info column */}
           <Reveal className="lg:col-span-2">
-            <p className="eyebrow">Get in touch</p>
+            <p className="eyebrow">{t("contact.getInTouch")}</p>
             <h2 className="mt-5 text-2xl sm:text-3xl">
-              Office & contact details
+              {t("contact.officeDetails")}
             </h2>
             <dl className="mt-8 divide-y border-y">
               {infoRows.map((row) => (
@@ -289,38 +290,40 @@ export default function Contact() {
                   >
                     <CheckIcon size={30} />
                   </span>
-                  <h2 className="mt-6 font-display text-2xl">Thank you</h2>
+                  <h2 className="mt-6 font-display text-2xl">
+                    {t("contact.successTitle")}
+                  </h2>
                   <p
                     className="mx-auto mt-3 max-w-sm"
                     style={{ color: "var(--c-ink-soft)" }}
                   >
-                    Your message has been sent. We'll get back to you as soon as
-                    possible.
+                    {t("contact.successMsg")}
                   </p>
                   <button
                     onClick={() => setSubmitted(false)}
                     className="btn btn-outline mt-8"
                   >
-                    Send another message
+                    {t("contact.again")}
                   </button>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} noValidate>
-                  <h2 className="font-display text-2xl">Send us a message</h2>
+                  <h2 className="font-display text-2xl">
+                    {t("contact.formHeading")}
+                  </h2>
                   <p
                     className="mt-2 text-[0.92rem]"
                     style={{ color: "var(--c-ink-soft)" }}
                   >
-                    Fields marked <span aria-hidden="true">*</span>
-                    <span className="sr-only">with an asterisk</span> are
-                    required.
+                    {t("contact.requiredNote")}
                   </p>
 
                   <div className="mt-7 grid gap-5 sm:grid-cols-2">
                     {/* Name */}
                     <div>
                       <label htmlFor="name" className="field-label">
-                        Full Name <span aria-hidden="true">*</span>
+                        {t("contact.fullName")}{" "}
+                        <span aria-hidden="true">*</span>
                       </label>
                       <input
                         id="name"
@@ -332,7 +335,7 @@ export default function Contact() {
                         aria-invalid={errors.name ? "true" : "false"}
                         aria-describedby={errors.name ? "name-error" : undefined}
                         className="field-input"
-                        placeholder="Your full name"
+                        placeholder={t("contact.phName")}
                       />
                       {errors.name && (
                         <span id="name-error" className="field-error" role="alert">
@@ -344,7 +347,8 @@ export default function Contact() {
                     {/* Email */}
                     <div>
                       <label htmlFor="email" className="field-label">
-                        Email <span aria-hidden="true">*</span>
+                        {t("contact.emailLabel")}{" "}
+                        <span aria-hidden="true">*</span>
                       </label>
                       <input
                         id="email"
@@ -356,7 +360,7 @@ export default function Contact() {
                         aria-invalid={errors.email ? "true" : "false"}
                         aria-describedby={errors.email ? "email-error" : undefined}
                         className="field-input"
-                        placeholder="you@example.com"
+                        placeholder={t("contact.phEmail")}
                       />
                       {errors.email && (
                         <span id="email-error" className="field-error" role="alert">
@@ -368,7 +372,7 @@ export default function Contact() {
                     {/* Phone */}
                     <div>
                       <label htmlFor="phone" className="field-label">
-                        Phone (optional)
+                        {t("contact.phoneOptional")}
                       </label>
                       <input
                         id="phone"
@@ -378,14 +382,15 @@ export default function Contact() {
                         value={formData.phone}
                         onChange={handleChange}
                         className="field-input"
-                        placeholder="+977 98XXXXXXXX"
+                        placeholder={t("contact.phPhone")}
                       />
                     </div>
 
                     {/* Subject */}
                     <div>
                       <label htmlFor="subject" className="field-label">
-                        Subject <span aria-hidden="true">*</span>
+                        {t("contact.subjectLabel")}{" "}
+                        <span aria-hidden="true">*</span>
                       </label>
                       <select
                         id="subject"
@@ -396,10 +401,10 @@ export default function Contact() {
                         aria-describedby={errors.subject ? "subject-error" : undefined}
                         className="field-input"
                       >
-                        <option value="">Select a subject</option>
+                        <option value="">{t("contact.selectSubject")}</option>
                         {SUBJECT_OPTIONS.map((opt) => (
-                          <option key={opt} value={opt}>
-                            {opt}
+                          <option key={opt.value} value={opt.value}>
+                            {t(opt.labelKey)}
                           </option>
                         ))}
                       </select>
@@ -414,7 +419,8 @@ export default function Contact() {
                   {/* Message */}
                   <div className="mt-5">
                     <label htmlFor="message" className="field-label">
-                      Message <span aria-hidden="true">*</span>
+                      {t("contact.messageLabel")}{" "}
+                      <span aria-hidden="true">*</span>
                     </label>
                     <textarea
                       id="message"
@@ -425,7 +431,7 @@ export default function Contact() {
                       aria-invalid={errors.message ? "true" : "false"}
                       aria-describedby={errors.message ? "message-error" : undefined}
                       className="field-input resize-y"
-                      placeholder="Briefly describe how we can help."
+                      placeholder={t("contact.phMessage")}
                     />
                     {errors.message && (
                       <span id="message-error" className="field-error" role="alert">
@@ -467,16 +473,14 @@ export default function Contact() {
                     disabled={submitting}
                     className="btn btn-primary mt-7 w-full"
                   >
-                    {submitting ? "Sending…" : "Send Message"}
+                    {submitting ? t("contact.sending") : t("contact.send")}
                   </button>
 
                   <p
                     className="mt-5 text-[0.82rem] leading-relaxed"
                     style={{ color: "var(--c-ink-faint)" }}
                   >
-                    Sending a message does not create an attorney–client
-                    relationship. Please do not include confidential information
-                    until we have agreed to act for you.
+                    {t("contact.disclaimer")}
                   </p>
                 </form>
               )}
@@ -487,15 +491,15 @@ export default function Contact() {
         {/* Loading state for the info column only (form is always usable) */}
         {loading && (
           <p className="sr-only" aria-live="polite">
-            Loading office details
+            {t("loading")}
           </p>
         )}
       </section>
 
       {/* Map */}
-      <section aria-label="Office location map" className="map-section">
+      <section aria-label={t("contact.mapTitle")} className="map-section">
         <iframe
-          title="Map showing the Aabiskar Law Chamber office in Pokhara"
+          title={t("contact.mapTitle")}
           src={`https://www.google.com/maps?q=${encodeURIComponent(
             FIRM.mapQuery
           )}&output=embed`}

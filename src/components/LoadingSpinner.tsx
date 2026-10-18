@@ -1,11 +1,14 @@
+import { useLanguage } from "../hooks/useLanguage";
+
 /** Lightweight full-page loader used while route chunks or data load. */
 export default function LoadingSpinner() {
+  const { t } = useLanguage();
   return (
     <div
       className="flex min-h-[60vh] items-center justify-center"
       role="status"
       aria-live="polite"
-      aria-label="Loading"
+      aria-label={t("loading")}
     >
       <span className="flex flex-col items-center gap-4">
         <span
@@ -16,7 +19,7 @@ export default function LoadingSpinner() {
           className="text-xs font-semibold uppercase tracking-[0.2em]"
           style={{ color: "var(--c-ink-faint)" }}
         >
-          Loading
+          {t("loading")}
         </span>
       </span>
     </div>

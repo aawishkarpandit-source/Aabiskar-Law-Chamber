@@ -6,36 +6,17 @@ import PageHeader from "../components/PageHeader";
 import { Skeleton } from "../components/Feedback";
 import { renderIcon } from "../lib/icons";
 import { SITE_URL } from "../lib/site";
+import { useLanguage } from "../hooks/useLanguage";
 import { ArrowRightIcon } from "../components/Icons";
 import { getPracticeAreas } from "../lib/queries";
 import type { PracticeArea } from "../types";
 
 const process = [
-  {
-    step: "01",
-    title: "Consultation",
-    description:
-      "We listen to your case and understand your legal needs thoroughly.",
-  },
-  {
-    step: "02",
-    title: "Analysis",
-    description:
-      "Our team analyzes your case and develops a strategic approach.",
-  },
-  {
-    step: "03",
-    title: "Action",
-    description:
-      "We execute the legal strategy with precision and dedication.",
-  },
-  {
-    step: "04",
-    title: "Resolution",
-    description:
-      "We work towards the best possible outcome for your case.",
-  },
-];
+  { step: "01", titleKey: "services.p1Title", descKey: "services.p1Desc" },
+  { step: "02", titleKey: "services.p2Title", descKey: "services.p2Desc" },
+  { step: "03", titleKey: "services.p3Title", descKey: "services.p3Desc" },
+  { step: "04", titleKey: "services.p4Title", descKey: "services.p4Desc" },
+] as const;
 
 const breadcrumbLd = {
   "@context": "https://schema.org",
@@ -52,6 +33,7 @@ const breadcrumbLd = {
 };
 
 export default function Services() {
+  const { t } = useLanguage();
   const [services, setServices] = useState<PracticeArea[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -99,9 +81,9 @@ export default function Services() {
       />
 
       <PageHeader
-        eyebrow="Practice Areas"
-        title="Legal services across the matters that matter most"
-        subtitle="From criminal defense to corporate compliance, we provide clear, practical counsel for individuals and businesses across Nepal."
+        eyebrow={t("services.eyebrow")}
+        title={t("services.title")}
+        subtitle={t("services.subtitle")}
       />
 
       {/* Practice areas list */}
@@ -114,15 +96,15 @@ export default function Services() {
           </div>
         ) : services.length === 0 ? (
           <div className="py-16 text-center">
-            <h2 className="font-display text-2xl">No practice areas to show</h2>
+            <h2 className="font-display text-2xl">{t("services.emptyTitle")}</h2>
             <p
               className="mt-3"
               style={{ color: "var(--c-ink-soft)" }}
             >
-              Please check back soon, or contact us to discuss your matter.
+              {t("services.emptyMsg")}
             </p>
             <Link to="/contact" className="btn btn-primary mt-6">
-              Contact Us
+              {t("services.emptyBtn")}
             </Link>
           </div>
         ) : (
@@ -178,7 +160,7 @@ export default function Services() {
                       to="/contact"
                       className="link-underline mt-5 inline-flex text-[0.9rem]"
                     >
-                      Discuss this service
+                      {t("services.discuss")}
                       <ArrowRightIcon size={15} />
                     </Link>
                   </div>
@@ -199,9 +181,9 @@ export default function Services() {
       >
         <div className="container-page py-20 sm:py-24">
           <Reveal className="max-w-2xl">
-            <p className="eyebrow">Our Process</p>
+            <p className="eyebrow">{t("services.processEyebrow")}</p>
             <h2 className="mt-5 text-3xl sm:text-4xl lg:text-[2.9rem]">
-              How we work with you
+              {t("services.processHeading")}
             </h2>
           </Reveal>
           <div className="mt-14 grid gap-px overflow-hidden border sm:grid-cols-2 lg:grid-cols-4"
@@ -218,12 +200,12 @@ export default function Services() {
                   >
                     {item.step}
                   </span>
-                  <h3 className="mt-5 text-xl">{item.title}</h3>
+                  <h3 className="mt-5 text-xl">{t(item.titleKey)}</h3>
                   <p
                     className="mt-3 text-[0.95rem] leading-relaxed"
                     style={{ color: "var(--c-ink-soft)" }}
                   >
-                    {item.description}
+                    {t(item.descKey)}
                   </p>
                 </div>
               </Reveal>
@@ -240,20 +222,19 @@ export default function Services() {
               className="mx-auto max-w-2xl text-3xl sm:text-4xl"
               style={{ color: "#fff" }}
             >
-              Not sure where to start?
+              {t("services.ctaTitle")}
             </h2>
             <p
               className="mx-auto mt-4 max-w-lg text-lg"
               style={{ color: "rgba(255,255,255,0.72)" }}
             >
-              Tell us about your situation and we'll point you in the right
-              direction.
+              {t("services.ctaSub")}
             </p>
           </Reveal>
           <Reveal delay={0.1}>
             <div className="mt-8">
               <Link to="/contact" className="btn btn-gold">
-                Request a Consultation
+                {t("services.ctaBtn")}
                 <ArrowRightIcon size={16} />
               </Link>
             </div>

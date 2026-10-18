@@ -5,27 +5,16 @@ import Reveal from "../components/Reveal";
 import PageHeader from "../components/PageHeader";
 import { Skeleton } from "../components/Feedback";
 import { SITE_URL } from "../lib/site";
+import { useLanguage } from "../hooks/useLanguage";
 import { ArrowRightIcon } from "../components/Icons";
 import { getAboutContent, getStats, getTeamMembers } from "../lib/queries";
 import type { AboutContent, Stat, TeamMember } from "../types";
 
 const values = [
-  {
-    title: "Integrity",
-    description:
-      "We uphold the highest ethical standards in all our dealings, ensuring transparency and honesty with every client.",
-  },
-  {
-    title: "Excellence",
-    description:
-      "We strive for excellence in every case we handle, leaving no stone unturned in our pursuit of justice.",
-  },
-  {
-    title: "Compassion",
-    description:
-      "We understand that legal matters can be stressful, and we treat every client with empathy and understanding.",
-  },
-];
+  { key: "about.integrity", descKey: "about.integrityDesc" },
+  { key: "about.excellence", descKey: "about.excellenceDesc" },
+  { key: "about.compassion", descKey: "about.compassionDesc" },
+] as const;
 
 const aboutLd = {
   "@context": "https://schema.org",
@@ -55,6 +44,7 @@ const breadcrumbLd = {
 };
 
 export default function About() {
+  const { t } = useLanguage();
   const [about, setAbout] = useState<AboutContent | null>(null);
   const [stats, setStats] = useState<Stat[]>([]);
   const [team, setTeam] = useState<TeamMember[]>([]);
@@ -95,9 +85,9 @@ export default function About() {
       />
 
       <PageHeader
-        eyebrow="About the Firm"
-        title="A commitment to justice, grounded in Pokhara"
-        subtitle="Providing legal services with integrity and care for individuals and businesses across Nepal."
+        eyebrow={t("about.eyebrow")}
+        title={t("about.title")}
+        subtitle={t("about.subtitle")}
       />
 
       {/* About content */}
@@ -192,9 +182,9 @@ export default function About() {
       {/* Values */}
       <section className="container-page py-20 sm:py-24">
         <Reveal className="max-w-2xl">
-          <p className="eyebrow">Our Values</p>
+          <p className="eyebrow">{t("about.valuesEyebrow")}</p>
           <h2 className="mt-5 text-3xl sm:text-4xl lg:text-[2.9rem]">
-            The principles we work by
+            {t("about.valuesHeading")}
           </h2>
         </Reveal>
         <div
@@ -202,7 +192,7 @@ export default function About() {
           style={{ background: "var(--c-line)", borderColor: "var(--c-line)" }}
         >
           {values.map((v, i) => (
-            <Reveal key={v.title} delay={i * 0.08}>
+            <Reveal key={v.key} delay={i * 0.08}>
               <div className="h-full p-8" style={{ background: "var(--c-canvas)" }}>
                 <span
                   className="text-sm font-semibold"
@@ -210,12 +200,12 @@ export default function About() {
                 >
                   {String(i + 1).padStart(2, "0")}
                 </span>
-                <h3 className="mt-6 text-xl">{v.title}</h3>
+                <h3 className="mt-6 text-xl">{t(v.key)}</h3>
                 <p
                   className="mt-3 text-[0.96rem] leading-relaxed"
                   style={{ color: "var(--c-ink-soft)" }}
                 >
-                  {v.description}
+                  {t(v.descKey)}
                 </p>
               </div>
             </Reveal>
@@ -235,14 +225,14 @@ export default function About() {
           <div className="container-page py-20 sm:py-24">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
               <Reveal>
-                <p className="eyebrow">Our Team</p>
+                <p className="eyebrow">{t("about.teamEyebrow")}</p>
                 <h2 className="mt-5 text-3xl sm:text-4xl lg:text-[2.9rem]">
-                  Meet the people
+                  {t("about.teamHeading")}
                 </h2>
               </Reveal>
               <Reveal delay={0.1}>
                 <Link to="/team" className="link-underline">
-                  Full team profiles
+                  {t("about.teamAll")}
                   <ArrowRightIcon size={16} />
                 </Link>
               </Reveal>
@@ -306,13 +296,13 @@ export default function About() {
               className="mx-auto max-w-2xl text-3xl sm:text-4xl"
               style={{ color: "#fff" }}
             >
-              Discuss your legal matter with us
+              {t("about.ctaTitle")}
             </h2>
           </Reveal>
           <Reveal delay={0.1}>
             <div className="mt-8">
               <Link to="/contact" className="btn btn-gold">
-                Book a Consultation
+                {t("about.ctaButton")}
                 <ArrowRightIcon size={16} />
               </Link>
             </div>

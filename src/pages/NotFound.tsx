@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom";
 import SEO from "../components/SEO";
+import { useLanguage } from "../hooks/useLanguage";
 import { ArrowRightIcon } from "../components/Icons";
 
 export default function NotFound() {
+  const { t } = useLanguage();
   return (
     <>
       <SEO
@@ -19,21 +21,20 @@ export default function NotFound() {
         >
           404
         </p>
-        <h1 className="mt-4 text-3xl sm:text-4xl">Page not found</h1>
+        <h1 className="mt-4 text-3xl sm:text-4xl">{t("nf.title")}</h1>
         <p
           className="mt-4 max-w-md text-[1.02rem] leading-relaxed"
           style={{ color: "var(--c-ink-soft)" }}
         >
-          The page you're looking for doesn't exist or has been moved. Let us
-          help you find your way.
+          {t("nf.message")}
         </p>
         <div className="mt-8 flex flex-wrap justify-center gap-4">
           <Link to="/" className="btn btn-primary">
-            Back to home
+            {t("nf.home")}
             <ArrowRightIcon size={16} />
           </Link>
           <Link to="/contact" className="btn btn-outline">
-            Contact us
+            {t("nf.contact")}
           </Link>
         </div>
       </section>

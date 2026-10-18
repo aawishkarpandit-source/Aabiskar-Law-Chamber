@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import { useLanguage } from "../hooks/useLanguage";
 import { ChevronUpIcon } from "./Icons";
 
 /**
@@ -9,6 +10,7 @@ import { ChevronUpIcon } from "./Icons";
  */
 export default function ScrollToTop() {
   const { pathname } = useLocation();
+  const { t } = useLanguage();
   const [showButton, setShowButton] = useState(false);
 
   // Reset scroll on route change (but not on anchor/hash navigation).
@@ -27,8 +29,8 @@ export default function ScrollToTop() {
   return (
     <button
       onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-      aria-label="Back to top"
-      title="Back to top"
+      aria-label={t("a11y.backToTop")}
+      title={t("a11y.backToTop")}
       className="fixed bottom-6 right-6 z-[999] flex h-12 w-12 items-center justify-center rounded-full border shadow-lg transition-all duration-300 hover:-translate-y-0.5"
       style={{
         background: "var(--c-ink)",

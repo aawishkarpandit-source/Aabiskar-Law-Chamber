@@ -1,44 +1,46 @@
 import { Link } from "react-router-dom";
 import { FIRM } from "../lib/site";
+import { useLanguage } from "../hooks/useLanguage";
 import { ArrowUpRightIcon } from "./Icons";
 
 const quickLinks = [
-  { label: "Home", href: "/" },
-  { label: "About", href: "/about" },
-  { label: "Practice Areas", href: "/services" },
-  { label: "Team", href: "/team" },
-  { label: "Contact", href: "/contact" },
-];
+  { key: "nav.home", href: "/" },
+  { key: "nav.about", href: "/about" },
+  { key: "nav.services", href: "/services" },
+  { key: "nav.team", href: "/team" },
+  { key: "nav.contact", href: "/contact" },
+] as const;
 
 const practiceAreas = [
-  { label: "Criminal Litigation", href: "/services#criminal-litigation" },
-  { label: "Property & Land Law", href: "/services#property-law" },
-  { label: "Family & Divorce", href: "/services#family-law" },
-  { label: "Corporate Law", href: "/services#corporate-law" },
-  { label: "Banking & Finance", href: "/services#banking-finance" },
-  { label: "Cyber Law & IT", href: "/services#cyber-law" },
-];
-
-const contactItems = [
-  {
-    label: "Office",
-    value: `${FIRM.address.street}, ${FIRM.address.city}`,
-    href: undefined as string | undefined,
-  },
-  {
-    label: "Phone",
-    value: FIRM.phoneDisplay,
-    href: `tel:${FIRM.phone}`,
-  },
-  {
-    label: "Email",
-    value: FIRM.email,
-    href: `mailto:${FIRM.email}`,
-  },
-];
+  { key: "footer.areaCriminal", href: "/services#criminal-litigation" },
+  { key: "footer.areaProperty", href: "/services#property-law" },
+  { key: "footer.areaFamily", href: "/services#family-law" },
+  { key: "footer.areaCorporate", href: "/services#corporate-law" },
+  { key: "footer.areaBanking", href: "/services#banking-finance" },
+  { key: "footer.areaCyber", href: "/services#cyber-law" },
+] as const;
 
 export default function Footer() {
   const year = new Date().getFullYear();
+  const { t } = useLanguage();
+
+  const contactItems = [
+    {
+      label: t("footer.office"),
+      value: `${FIRM.address.street}, ${FIRM.address.city}`,
+      href: undefined as string | undefined,
+    },
+    {
+      label: t("footer.phone"),
+      value: FIRM.phoneDisplay,
+      href: `tel:${FIRM.phone}`,
+    },
+    {
+      label: t("footer.email"),
+      value: FIRM.email,
+      href: `mailto:${FIRM.email}`,
+    },
+  ];
 
   return (
     <footer className="navy-band">
@@ -53,15 +55,13 @@ export default function Footer() {
               className="mt-1 text-[0.7rem] font-semibold uppercase tracking-[0.25em]"
               style={{ color: "var(--c-gold)" }}
             >
-              Legal Excellence · Pokhara
+              {t("footer.brandTagline")}
             </p>
             <p
               className="mt-6 max-w-sm text-[0.95rem] leading-relaxed"
               style={{ color: "rgba(255,255,255,0.62)" }}
             >
-              A law firm in Pokhara, Nepal, providing legal services in
-              criminal, property, family, corporate, banking, and cyber law.
-              Led by Adv. Hari Prasad Pandit.
+              {t("footer.brandDesc")}
             </p>
             <div className="mt-7 flex flex-wrap gap-3">
               <a
@@ -91,7 +91,7 @@ export default function Footer() {
               className="text-[0.72rem] font-semibold uppercase tracking-[0.2em]"
               style={{ color: "var(--c-gold)" }}
             >
-              Navigate
+              {t("footer.navigate")}
             </h3>
             <ul className="mt-5 space-y-3">
               {quickLinks.map((l) => (
@@ -101,7 +101,7 @@ export default function Footer() {
                     className="text-[0.92rem] transition-colors duration-200"
                     style={{ color: "rgba(255,255,255,0.68)" }}
                   >
-                    {l.label}
+                    {t(l.key)}
                   </Link>
                 </li>
               ))}
@@ -114,7 +114,7 @@ export default function Footer() {
               className="text-[0.72rem] font-semibold uppercase tracking-[0.2em]"
               style={{ color: "var(--c-gold)" }}
             >
-              Practice Areas
+              {t("footer.practiceAreas")}
             </h3>
             <ul className="mt-5 space-y-3">
               {practiceAreas.map((l) => (
@@ -124,7 +124,7 @@ export default function Footer() {
                     className="inline-flex items-center gap-1 text-[0.92rem] transition-colors duration-200"
                     style={{ color: "rgba(255,255,255,0.68)" }}
                   >
-                    {l.label}
+                    {t(l.key)}
                   </Link>
                 </li>
               ))}
@@ -137,7 +137,7 @@ export default function Footer() {
               className="text-[0.72rem] font-semibold uppercase tracking-[0.2em]"
               style={{ color: "var(--c-gold)" }}
             >
-              Contact
+              {t("footer.contact")}
             </h3>
             <ul className="mt-5 space-y-4">
               {contactItems.map((c) => (
@@ -172,7 +172,7 @@ export default function Footer() {
               className="link-underline mt-6 inline-flex text-sm"
               style={{ color: "var(--c-gold)" }}
             >
-              Book a consultation
+              {t("footer.book")}
               <ArrowUpRightIcon size={15} />
             </Link>
           </div>
@@ -186,11 +186,9 @@ export default function Footer() {
           }}
         >
           <p>
-            © {year} {FIRM.name}. All rights reserved.
+            © {year} {FIRM.name}. {t("footer.rights")}
           </p>
-          <p>
-            Pokhara, Kaski · Gandaki Province, Nepal
-          </p>
+          <p>{t("footer.location")}</p>
         </div>
       </div>
     </footer>

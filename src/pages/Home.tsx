@@ -5,6 +5,7 @@ import Reveal from "../components/Reveal";
 import { Skeleton } from "../components/Feedback";
 import { renderIcon } from "../lib/icons";
 import { SITE_URL, FIRM, FIRM_ADDRESS_LINE } from "../lib/site";
+import { useLanguage } from "../hooks/useLanguage";
 import { ArrowRightIcon, ArrowUpRightIcon, QuoteIcon } from "../components/Icons";
 import {
   getHeroContent,
@@ -55,6 +56,7 @@ const organizationLd = {
 };
 
 export default function Home() {
+  const { t } = useLanguage();
   const [hero, setHero] = useState<HeroContent | null>(null);
   const [intro, setIntro] = useState<IntroContent | null>(null);
   const [why, setWhy] = useState<WhyChooseUsContent | null>(null);
@@ -125,16 +127,14 @@ export default function Home() {
         <div className="container-page relative z-10 grid items-center gap-14 py-20 sm:py-24 lg:grid-cols-12 lg:gap-10 lg:py-28">
           <div className="lg:col-span-7">
             <Reveal>
-              <p className="eyebrow">
-                {hero?.badge ?? "Trusted Legal Counsel"}
-              </p>
+              <p className="eyebrow">{hero?.badge ?? t("home.badge")}</p>
             </Reveal>
             <Reveal delay={0.08}>
               <h1 className="mt-6 text-[2.75rem] leading-[1.05] sm:text-6xl lg:text-[4.5rem]">
-                {hero?.titleLine1 ?? "Legal Counsel"}
+                {hero?.titleLine1 ?? t("home.title1")}
                 <br />
                 <span style={{ color: "var(--c-accent)" }}>
-                  {hero?.titleLine2 ?? "You Can Rely On"}
+                  {hero?.titleLine2 ?? t("home.title2")}
                 </span>
               </h1>
             </Reveal>
@@ -143,18 +143,17 @@ export default function Home() {
                 className="mt-7 max-w-xl text-lg leading-relaxed"
                 style={{ color: "var(--c-ink-soft)" }}
               >
-                {hero?.subtitle ??
-                  "Expert legal services for individuals and businesses across Pokhara and Nepal."}
+                {hero?.subtitle ?? t("home.subtitle")}
               </p>
             </Reveal>
             <Reveal delay={0.24}>
               <div className="mt-10 flex flex-wrap gap-4">
                 <Link to="/contact" className="btn btn-primary">
-                  {hero?.ctaPrimary ?? "Book a Consultation"}
+                  {hero?.ctaPrimary ?? t("cta.book")}
                   <ArrowRightIcon size={16} />
                 </Link>
                 <Link to="/services" className="btn btn-outline">
-                  {hero?.ctaSecondary ?? "Our Services"}
+                  {hero?.ctaSecondary ?? t("nav.services")}
                 </Link>
               </div>
             </Reveal>
@@ -179,7 +178,7 @@ export default function Home() {
                 className="mt-5 font-display text-[1.6rem] leading-snug"
                 style={{ color: "var(--c-ink)" }}
               >
-                {FIRM.tagline}
+                {t("home.tagline")}
               </p>
               <div
                 className="my-7 h-px w-full"
@@ -187,7 +186,9 @@ export default function Home() {
               />
               <dl className="space-y-4 text-[0.92rem]">
                 <div className="flex justify-between gap-4">
-                  <dt style={{ color: "var(--c-ink-faint)" }}>Office</dt>
+                  <dt style={{ color: "var(--c-ink-faint)" }}>
+                    {t("footer.office")}
+                  </dt>
                   <dd
                     className="text-right"
                     style={{ color: "var(--c-ink)" }}
@@ -196,7 +197,9 @@ export default function Home() {
                   </dd>
                 </div>
                 <div className="flex justify-between gap-4">
-                  <dt style={{ color: "var(--c-ink-faint)" }}>Phone</dt>
+                  <dt style={{ color: "var(--c-ink-faint)" }}>
+                    {t("footer.phone")}
+                  </dt>
                   <dd style={{ color: "var(--c-ink)" }}>
                     <a
                       href={`tel:${FIRM.phone}`}
@@ -207,7 +210,9 @@ export default function Home() {
                   </dd>
                 </div>
                 <div className="flex justify-between gap-4">
-                  <dt style={{ color: "var(--c-ink-faint)" }}>Email</dt>
+                  <dt style={{ color: "var(--c-ink-faint)" }}>
+                    {t("footer.email")}
+                  </dt>
                   <dd style={{ color: "var(--c-ink)" }}>
                     <a
                       href={`mailto:${FIRM.email}`}
@@ -288,7 +293,7 @@ export default function Home() {
                 ))}
               </div>
               <Link to="/about" className="link-underline mt-8 inline-flex">
-                Learn more about us
+                {t("home.learnMore")}
                 <ArrowUpRightIcon size={16} />
               </Link>
             </Reveal>
@@ -326,14 +331,14 @@ export default function Home() {
           <div className="container-page py-20 sm:py-24">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
               <Reveal>
-                <p className="eyebrow">Practice Areas</p>
+                <p className="eyebrow">{t("home.practiceEyebrow")}</p>
                 <h2 className="mt-5 max-w-xl text-3xl sm:text-4xl lg:text-[2.9rem]">
-                  Legal services tailored to your matter
+                  {t("home.practiceHeading")}
                 </h2>
               </Reveal>
               <Reveal delay={0.1}>
                 <Link to="/services" className="link-underline">
-                  All practice areas
+                  {t("home.practiceAll")}
                   <ArrowUpRightIcon size={16} />
                 </Link>
               </Reveal>
@@ -429,14 +434,14 @@ export default function Home() {
           <div className="container-page py-20 sm:py-24">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
               <Reveal>
-                <p className="eyebrow">Our Team</p>
+                <p className="eyebrow">{t("home.teamEyebrow")}</p>
                 <h2 className="mt-5 text-3xl sm:text-4xl lg:text-[2.9rem]">
-                  The advocates behind your case
+                  {t("home.teamHeading")}
                 </h2>
               </Reveal>
               <Reveal delay={0.1}>
                 <Link to="/team" className="link-underline">
-                  Meet the full team
+                  {t("home.teamAll")}
                   <ArrowUpRightIcon size={16} />
                 </Link>
               </Reveal>
@@ -496,9 +501,9 @@ export default function Home() {
       {!loading && testimonials.length > 0 && (
         <section className="container-page py-20 sm:py-24">
           <Reveal className="max-w-2xl">
-            <p className="eyebrow">Client Stories</p>
+            <p className="eyebrow">{t("home.testiEyebrow")}</p>
             <h2 className="mt-5 text-3xl sm:text-4xl lg:text-[2.9rem]">
-              What our clients say
+              {t("home.testiHeading")}
             </h2>
           </Reveal>
           <div className="mt-14 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
