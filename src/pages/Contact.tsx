@@ -59,7 +59,7 @@ const contactPageLd = {
 };
 
 export default function Contact() {
-  const { t } = useLanguage();
+  const { lang, t } = useLanguage();
   const [siteConfig, setSiteConfig] = useState<SiteConfig | null>(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -81,7 +81,7 @@ export default function Contact() {
     let cancelled = false;
     const run = async () => {
       try {
-        const config = await getSiteConfig();
+        const config = await getSiteConfig(lang);
         if (!cancelled) setSiteConfig(config);
       } catch (err) {
         console.error("Error fetching site config:", err);
@@ -93,7 +93,7 @@ export default function Contact() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [lang]);
 
   const validateForm = (): boolean => {
     const newErrors: ContactFormErrors = {};

@@ -56,7 +56,7 @@ const organizationLd = {
 };
 
 export default function Home() {
-  const { t } = useLanguage();
+  const { lang, t } = useLanguage();
   const [hero, setHero] = useState<HeroContent | null>(null);
   const [intro, setIntro] = useState<IntroContent | null>(null);
   const [why, setWhy] = useState<WhyChooseUsContent | null>(null);
@@ -81,14 +81,14 @@ export default function Home() {
           teamData,
           testiData,
         ] = await Promise.all([
-          getHeroContent(),
-          getIntroContent(),
-          getWhyChooseUsContent(),
-          getCTAContent(),
-          getStats(),
-          getPracticeAreas(),
-          getTeamMembers(),
-          getTestimonials(),
+          getHeroContent(lang),
+          getIntroContent(lang),
+          getWhyChooseUsContent(lang),
+          getCTAContent(lang),
+          getStats(lang),
+          getPracticeAreas(lang),
+          getTeamMembers(lang),
+          getTestimonials(lang),
         ]);
         if (cancelled) return;
         setHero(heroData);
@@ -109,7 +109,7 @@ export default function Home() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [lang]);
 
   const selectedAreas = areas.slice(0, 4);
 

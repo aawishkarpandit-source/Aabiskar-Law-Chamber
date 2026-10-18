@@ -1,4 +1,5 @@
 import { supabase } from './supabase'
+import type { Lang } from './i18n'
 import type {
   SiteConfig,
   NavItem,
@@ -15,129 +16,106 @@ import type {
   ContactSubmission,
 } from '../types'
 
+/**
+ * Resolve a localized field. When the active language is Nepali (`ne`) and a
+ * non-empty Nepali value exists, return it; otherwise fall back to English.
+ * This makes the app backward-compatible: if the `_np` columns haven't been
+ * added (migration not run) or are NULL, the English text is shown.
+ */
+function localize<T extends string>(
+  lang: Lang,
+  np: T | null | undefined,
+  en: T,
+): T {
+  if (lang === 'ne' && np != null && np.trim() !== '') return np
+  return en
+}
+
+/**
+ * Fetch a `site_config` jsonb value by key, with locale fallback.
+ *
+ * Nepali variants are stored under parallel `<key>_np` rows (see
+ * supabase-migration-np.sql). When lang = 'ne' we try the `_np` key first and
+ * fall back to the English key if that row is absent. When lang = 'en' we read
+ * only the English key.
+ */
+async function getSiteConfigValue<T>(
+  key: string,
+  lang: Lang,
+): Promise<T | null> {
+  if (lang === 'ne') {
+    const { data, error } = await supabase
+      .from('site_config')
+      .select('value')
+      .eq('key', `${key}_np`)
+      .maybeSingle()
+    if (!error && data) return data.value as T
+    // else fall through to the English key
+  }
+
+  const { data, error } = await supabase
+    .from('site_config')
+    .select('value')
+    .eq('key', key)
+    .maybeSingle()
+
+  if (error || !data) {
+    console.error(`Error fetching site config "${key}":`, error)
+    return null
+  }
+
+  return data.value as T
+}
+
 // Site config queries
-export async function getSiteConfig(): Promise<SiteConfig | null> {
-  const { data, error } = await supabase
-    .from('site_config')
-    .select('value')
-    .eq('key', 'site_info')
-    .single()
-
-  if (error || !data) {
-    console.error('Error fetching site config:', error)
-    return null
-  }
-
-  return data.value as SiteConfig
+export async function getSiteConfig(
+  lang: Lang = 'en',
+): Promise<SiteConfig | null> {
+  return getSiteConfigValue<SiteConfig>('site_info', lang)
 }
 
-export async function getNavItems(): Promise<NavItem[]> {
-  const { data, error } = await supabase
-    .from('site_config')
-    .select('value')
-    .eq('key', 'nav')
-    .single()
-
-  if (error || !data) {
-    console.error('Error fetching nav items:', error)
-    return []
-  }
-
-  return data.value as NavItem[]
+export async function getNavItems(lang: Lang = 'en'): Promise<NavItem[]> {
+  return (await getSiteConfigValue<NavItem[]>('nav', lang)) ?? []
 }
 
-export async function getHeroContent(): Promise<HeroContent | null> {
-  const { data, error } = await supabase
-    .from('site_config')
-    .select('value')
-    .eq('key', 'hero')
-    .single()
-
-  if (error || !data) {
-    console.error('Error fetching hero content:', error)
-    return null
-  }
-
-  return data.value as HeroContent
+export async function getHeroContent(
+  lang: Lang = 'en',
+): Promise<HeroContent | null> {
+  return getSiteConfigValue<HeroContent>('hero', lang)
 }
 
-export async function getIntroContent(): Promise<IntroContent | null> {
-  const { data, error } = await supabase
-    .from('site_config')
-    .select('value')
-    .eq('key', 'intro')
-    .single()
-
-  if (error || !data) {
-    console.error('Error fetching intro content:', error)
-    return null
-  }
-
-  return data.value as IntroContent
+export async function getIntroContent(
+  lang: Lang = 'en',
+): Promise<IntroContent | null> {
+  return getSiteConfigValue<IntroContent>('intro', lang)
 }
 
-export async function getFeaturesContent(): Promise<FeaturesContent | null> {
-  const { data, error } = await supabase
-    .from('site_config')
-    .select('value')
-    .eq('key', 'features')
-    .single()
-
-  if (error || !data) {
-    console.error('Error fetching features content:', error)
-    return null
-  }
-
-  return data.value as FeaturesContent
+export async function getFeaturesContent(
+  lang: Lang = 'en',
+): Promise<FeaturesContent | null> {
+  return getSiteConfigValue<FeaturesContent>('features', lang)
 }
 
-export async function getAboutContent(): Promise<AboutContent | null> {
-  const { data, error } = await supabase
-    .from('site_config')
-    .select('value')
-    .eq('key', 'about')
-    .single()
-
-  if (error || !data) {
-    console.error('Error fetching about content:', error)
-    return null
-  }
-
-  return data.value as AboutContent
+export async function getAboutContent(
+  lang: Lang = 'en',
+): Promise<AboutContent | null> {
+  return getSiteConfigValue<AboutContent>('about', lang)
 }
 
-export async function getWhyChooseUsContent(): Promise<WhyChooseUsContent | null> {
-  const { data, error } = await supabase
-    .from('site_config')
-    .select('value')
-    .eq('key', 'whyChooseUs')
-    .single()
-
-  if (error || !data) {
-    console.error('Error fetching why choose us content:', error)
-    return null
-  }
-
-  return data.value as WhyChooseUsContent
+export async function getWhyChooseUsContent(
+  lang: Lang = 'en',
+): Promise<WhyChooseUsContent | null> {
+  return getSiteConfigValue<WhyChooseUsContent>('whyChooseUs', lang)
 }
 
-export async function getCTAContent(): Promise<CTAContent | null> {
-  const { data, error } = await supabase
-    .from('site_config')
-    .select('value')
-    .eq('key', 'cta')
-    .single()
-
-  if (error || !data) {
-    console.error('Error fetching CTA content:', error)
-    return null
-  }
-
-  return data.value as CTAContent
+export async function getCTAContent(
+  lang: Lang = 'en',
+): Promise<CTAContent | null> {
+  return getSiteConfigValue<CTAContent>('cta', lang)
 }
 
 // Stats queries
-export async function getStats(): Promise<Stat[]> {
+export async function getStats(lang: Lang = 'en'): Promise<Stat[]> {
   const { data, error } = await supabase
     .from('stats')
     .select('*')
@@ -148,11 +126,16 @@ export async function getStats(): Promise<Stat[]> {
     return []
   }
 
-  return data as Stat[]
+  return (data as Stat[]).map((s) => ({
+    ...s,
+    label: localize(lang, s.label_np, s.label),
+  }))
 }
 
 // Practice areas queries
-export async function getPracticeAreas(): Promise<PracticeArea[]> {
+export async function getPracticeAreas(
+  lang: Lang = 'en',
+): Promise<PracticeArea[]> {
   const { data, error } = await supabase
     .from('practice_areas')
     .select('*')
@@ -163,26 +146,63 @@ export async function getPracticeAreas(): Promise<PracticeArea[]> {
     return []
   }
 
-  return data as PracticeArea[]
+  return (data as PracticeArea[]).map((s) => ({
+    ...s,
+    title: localize(lang, s.title_np, s.title),
+    description: localize(lang, s.description_np, s.description),
+    detail:
+      s.detail == null
+        ? s.detail
+        : localize(lang, s.detail_np, s.detail),
+  }))
 }
 
-export async function getPracticeAreaById(id: string): Promise<PracticeArea | null> {
+export async function getPracticeAreaById(
+  id: string,
+  lang: Lang = 'en',
+): Promise<PracticeArea | null> {
   const { data, error } = await supabase
     .from('practice_areas')
     .select('*')
     .eq('id', id)
-    .single()
+    .maybeSingle()
 
   if (error || !data) {
     console.error('Error fetching practice area:', error)
     return null
   }
 
-  return data as PracticeArea
+  const s = data as PracticeArea
+  return {
+    ...s,
+    title: localize(lang, s.title_np, s.title),
+    description: localize(lang, s.description_np, s.description),
+    detail: s.detail == null ? s.detail : localize(lang, s.detail_np, s.detail),
+  }
 }
 
 // Team members queries
-export async function getTeamMembers(): Promise<TeamMember[]> {
+async function mapTeamMembers(
+  lang: Lang,
+  data: TeamMember[],
+): Promise<TeamMember[]> {
+  return data.map((m) => ({
+    ...m,
+    role: localize(lang, m.role_np, m.role),
+    specialization:
+      m.specialization == null
+        ? m.specialization
+        : localize(lang, m.specialization_np, m.specialization),
+    experience:
+      m.experience == null
+        ? m.experience
+        : localize(lang, m.experience_np, m.experience),
+  }))
+}
+
+export async function getTeamMembers(
+  lang: Lang = 'en',
+): Promise<TeamMember[]> {
   const { data, error } = await supabase
     .from('team_members')
     .select('*')
@@ -193,10 +213,12 @@ export async function getTeamMembers(): Promise<TeamMember[]> {
     return []
   }
 
-  return data as TeamMember[]
+  return mapTeamMembers(lang, data as TeamMember[])
 }
 
-export async function getSeniorMembers(): Promise<TeamMember[]> {
+export async function getSeniorMembers(
+  lang: Lang = 'en',
+): Promise<TeamMember[]> {
   const { data, error } = await supabase
     .from('team_members')
     .select('*')
@@ -208,10 +230,12 @@ export async function getSeniorMembers(): Promise<TeamMember[]> {
     return []
   }
 
-  return data as TeamMember[]
+  return mapTeamMembers(lang, data as TeamMember[])
 }
 
-export async function getAssociates(): Promise<TeamMember[]> {
+export async function getAssociates(
+  lang: Lang = 'en',
+): Promise<TeamMember[]> {
   const { data, error } = await supabase
     .from('team_members')
     .select('*')
@@ -223,11 +247,13 @@ export async function getAssociates(): Promise<TeamMember[]> {
     return []
   }
 
-  return data as TeamMember[]
+  return mapTeamMembers(lang, data as TeamMember[])
 }
 
 // Testimonials queries
-export async function getTestimonials(): Promise<Testimonial[]> {
+export async function getTestimonials(
+  lang: Lang = 'en',
+): Promise<Testimonial[]> {
   const { data, error } = await supabase
     .from('testimonials')
     .select('*')
@@ -238,7 +264,11 @@ export async function getTestimonials(): Promise<Testimonial[]> {
     return []
   }
 
-  return data as Testimonial[]
+  return (data as Testimonial[]).map((t) => ({
+    ...t,
+    role: localize(lang, t.role_np, t.role),
+    text: localize(lang, t.text_np, t.text),
+  }))
 }
 
 // Contact form submission

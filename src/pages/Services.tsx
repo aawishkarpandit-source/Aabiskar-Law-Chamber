@@ -33,7 +33,7 @@ const breadcrumbLd = {
 };
 
 export default function Services() {
-  const { t } = useLanguage();
+  const { lang, t } = useLanguage();
   const [services, setServices] = useState<PracticeArea[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -41,7 +41,7 @@ export default function Services() {
     let cancelled = false;
     const run = async () => {
       try {
-        const data = await getPracticeAreas();
+        const data = await getPracticeAreas(lang);
         if (!cancelled) setServices(data);
       } catch (err) {
         console.error("Error fetching practice areas:", err);
@@ -53,7 +53,7 @@ export default function Services() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [lang]);
 
   // Item-level structured data (only for records that actually exist).
   const jsonLd: Record<string, unknown>[] = [breadcrumbLd];

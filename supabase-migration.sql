@@ -25,7 +25,7 @@ INSERT INTO site_config (key, value) VALUES
   "shortName": "Aabiskar Law",
   "tagline": "Trusted Legal Counsel in Pokhara",
   "description": "Aabiskar Law Chamber is the premier law firm in Pokhara, Nepal. Led by Adv. Hari Prasad Pandit, we provide expert legal services in criminal, property, and corporate law.",
-  "url": "https://aabiskar-law-chamber.vercel.app",
+  "url": "https://aabiskarlaw.com.np",
   "logo": "/static/assets/brand/logo.png",
   "logoIcon": "/static/assets/brand/logo_icon.png",
   "email": "pandithari912@gmail.com",

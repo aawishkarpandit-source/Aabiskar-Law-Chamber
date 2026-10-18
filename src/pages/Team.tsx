@@ -109,7 +109,7 @@ function MemberCard({ member }: { member: TeamMember }) {
 }
 
 export default function Team() {
-  const { t } = useLanguage();
+  const { lang, t } = useLanguage();
   const [seniors, setSeniors] = useState<TeamMember[]>([]);
   const [associates, setAssociates] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
@@ -119,8 +119,8 @@ export default function Team() {
     const run = async () => {
       try {
         const [seniorsData, associatesData] = await Promise.all([
-          getSeniorMembers(),
-          getAssociates(),
+          getSeniorMembers(lang),
+          getAssociates(lang),
         ]);
         if (cancelled) return;
         setSeniors(seniorsData);
@@ -135,7 +135,7 @@ export default function Team() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [lang]);
 
   const teamLd = {
     "@context": "https://schema.org",

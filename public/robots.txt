@@ -4,4 +4,4 @@ Disallow: /admin
 Disallow: /info/
 Disallow: /components/
 
-Sitemap: https://aabiskar-law-chamber.vercel.app/sitemap.xml
+Sitemap: https://aabiskarlaw.com.np/sitemap.xml

@@ -4,7 +4,7 @@ A modern, full-stack website for Aabiskar Law Chamber, a law firm in Pokhara, Ne
 
 ## Live Site
 
-**https://aabiskar-law-chamber.vercel.app**
+**https://aabiskarlaw.com.np**
 
 ## Overview
 

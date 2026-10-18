@@ -10,7 +10,7 @@
  * from Supabase at runtime and is NOT duplicated here.
  */
 
-export const SITE_URL = "https://aabiskar-law-chamber.vercel.app";
+export const SITE_URL = "https://aabiskarlaw.com.np";
 export const SITE_NAME = "Aabiskar Law Chamber";
 
 export const FIRM = {

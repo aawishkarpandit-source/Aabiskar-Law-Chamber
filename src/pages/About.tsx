@@ -44,7 +44,7 @@ const breadcrumbLd = {
 };
 
 export default function About() {
-  const { t } = useLanguage();
+  const { lang, t } = useLanguage();
   const [about, setAbout] = useState<AboutContent | null>(null);
   const [stats, setStats] = useState<Stat[]>([]);
   const [team, setTeam] = useState<TeamMember[]>([]);
@@ -55,9 +55,9 @@ export default function About() {
     const run = async () => {
       try {
         const [aboutData, statsData, teamData] = await Promise.all([
-          getAboutContent(),
-          getStats(),
-          getTeamMembers(),
+          getAboutContent(lang),
+          getStats(lang),
+          getTeamMembers(lang),
         ]);
         if (cancelled) return;
         setAbout(aboutData);
@@ -73,7 +73,7 @@ export default function About() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [lang]);
 
   return (
     <>

@@ -189,6 +189,18 @@ export default function Footer() {
             © {year} {FIRM.name}. {t("footer.rights")}
           </p>
           <p>{t("footer.location")}</p>
+          <p>
+            Developed by{" "}
+            <a
+              href="https://veltriontech.vercel.app"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="link-underline"
+              style={{ color: "var(--c-gold)" }}
+            >
+              Veltrion
+            </a>
+          </p>
         </div>
       </div>
     </footer>

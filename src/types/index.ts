@@ -98,6 +98,8 @@ export interface Stat {
   id: number
   value: string
   label: string
+  /** Nepali variant (nullable). Falls back to `label` when absent/NULL. */
+  label_np?: string | null
   sort_order: number
 }
 
@@ -108,6 +110,10 @@ export interface PracticeArea {
   detail: string | null
   icon: string
   sort_order: number
+  /** Nepali variants (nullable). Fall back to the English fields when absent/NULL. */
+  title_np?: string | null
+  description_np?: string | null
+  detail_np?: string | null
 }
 
 export interface TeamMember {
@@ -120,6 +126,10 @@ export interface TeamMember {
   image: string | null
   member_type: 'senior' | 'associate'
   sort_order: number
+  /** Nepali variants (nullable). Fall back to the English fields when absent/NULL. */
+  role_np?: string | null
+  specialization_np?: string | null
+  experience_np?: string | null
 }
 
 export interface Testimonial {
@@ -129,6 +139,9 @@ export interface Testimonial {
   text: string
   rating: number
   sort_order: number
+  /** Nepali variants (nullable). Fall back to the English fields when absent/NULL. */
+  role_np?: string | null
+  text_np?: string | null
 }
 
 export interface ContactSubmission {
